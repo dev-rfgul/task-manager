@@ -9,4 +9,6 @@ app.get('/register',registerUser);
 app.get('/login',loginUser);
 app.get('/logout',logoutUser);  
 
+
+// the functionality is to be added here. 
 export default app;
