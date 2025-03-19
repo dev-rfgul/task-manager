@@ -51,10 +51,20 @@ export const loginUser = async (req, res) => {
         secure: true,
         sameSite: "None",
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        domain: ''
+        // domain: ''
     })
-    res.status(200).json({ message: 'Hello from login user' });
+    res.status(200).json({ message: "user login successfully" })
 }
 export const logoutUser = async (req, res) => {
-    res.status(200).json({ message: 'Hello from logout user' });
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+
+        })
+        res.status(200).json({ message: "User logout successfully" })
+    } catch (error) {
+        res.status(500).json({ message: "server error ", error: error.message })
+    }
 }
