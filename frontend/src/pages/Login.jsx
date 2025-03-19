@@ -13,7 +13,9 @@ const Login = () => {
         console.log("Button clicked");
 
         // Send a POST request to your backend with the provided email and password
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, { email, password }, { withCredentials: true })
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, { email, password },
+            // { withCredentials: true }
+        )
             .then((result) => {
                 console.log(result);
                 const userData = result.data;
@@ -23,7 +25,7 @@ const Login = () => {
                 if (userData.role === "admin") {
                     navigate('/admin', { state: { user: userData } }); // Redirect to admin page
                 } else {
-                    navigate('/', { state: { user: userData } });
+                    navigate('/home', { state: { user: userData } });
                     // Redirect to user page
                 }
             })

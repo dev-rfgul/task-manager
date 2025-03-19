@@ -9,7 +9,7 @@ export const registerUser = async (req, res) => {
         if (!name || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
-
+        console.log(name,email,password,role)
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });

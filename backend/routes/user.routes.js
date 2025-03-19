@@ -10,5 +10,5 @@ app.post('/login',loginUser);
 app.post('/logout',logoutUser);  
 
 
-// the functionality is to be added here. 
+// the functionality is to be added here.
 export default app;

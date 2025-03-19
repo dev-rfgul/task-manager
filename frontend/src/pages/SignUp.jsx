@@ -11,10 +11,12 @@ const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    
+    console.log(name, email, password)
     console.log(import.meta.env.VITE_BACKEND_URL)
     const submit = (e) => {
         e.preventDefault();
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/signup`, { name, email, password })
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, { name, email, password,role:'user' })
             .then(result => {
                 console.log('Response:', result.data); // Log response data
                 navigate('/login'); // Navigate after successful post request
