@@ -19,6 +19,7 @@ const Login = () => {
             .then((result) => {
                 console.log(result);
                 const userData = result.data;
+                console.log(userData.user);
                 localStorage.setItem("user", JSON.stringify(userData))
                 console.log(userData)
                 // Check the email to determine the redirection path

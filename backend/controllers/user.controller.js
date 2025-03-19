@@ -9,7 +9,7 @@ export const registerUser = async (req, res) => {
         if (!name || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        console.log(name,email,password,role)
+        console.log(name, email, password, role)
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
@@ -42,6 +42,7 @@ export const loginUser = async (req, res) => {
         }
 
         const user = await UserModel.findOne({ email });
+        console.log(user)
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -63,8 +64,16 @@ export const loginUser = async (req, res) => {
             sameSite: "None",
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         });
-
-        res.status(200).json({ message: "User logged in successfully" });
+        res.status(200).json({
+            message: 'Login successful',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            },
+            token
+        });
     } catch (error) {
         console.error("Login error:", error);
         res.status(500).json({ message: "Server error", error: error.message });
