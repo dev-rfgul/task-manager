@@ -16,10 +16,12 @@ const userSchema = mongoose.Schema({
         required: true,
     },
     isAdmin: {
-        type: Boolean,
-        required: true,
+        type: String,
+        enum: ["user", "admin"], // allowed values
         default: "user",
+        required: true,
     },
+
     dailyScore: {
         type: Number,
     },

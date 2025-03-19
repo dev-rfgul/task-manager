@@ -6,8 +6,8 @@ import {registerUser,loginUser,logoutUser} from '../controllers/user.controller.
 const app = express();
 
 app.post('/register',registerUser);
-app.get('/login',loginUser);
-app.get('/logout',logoutUser);  
+app.post('/login',loginUser);
+app.post('/logout',logoutUser);  
 
 
 // the functionality is to be added here. 
