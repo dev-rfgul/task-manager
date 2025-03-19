@@ -5,7 +5,7 @@ import {registerUser,loginUser,logoutUser} from '../controllers/user.controller.
 
 const app = express();
 
-app.get('/register',registerUser);
+app.post('/register',registerUser);
 app.get('/login',loginUser);
 app.get('/logout',logoutUser);  
 

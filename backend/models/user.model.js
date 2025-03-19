@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const userSchema = mongoose.Schema({
-    username: {
+    name: {
         type: String,
         required: true,
     },
@@ -18,7 +18,7 @@ const userSchema = mongoose.Schema({
     isAdmin: {
         type: Boolean,
         required: true,
-        default: false,
+        default: "user",
     },
     dailyScore: {
         type: Number,
