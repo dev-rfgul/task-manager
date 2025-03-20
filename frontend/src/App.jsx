@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
-import Home from './pages/Home'
-import Banner from './pages/Banner';
+import Dashboard from './pages/Dashboard'
+import Home from './pages/Home';
 
 
 const App = () => {
@@ -22,10 +22,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           {isUserLoggedIn ?
-            <Route path='/home' element={<Home />} /> :
+            <Route path='/dashboard' element={<Dashboard />} /> :
             <Route path='/login' element={<Login />} />
           }
-          <Route path='/' element={<Banner />} />
+          <Route path='/' element={<Home />} />
           <Route path='/signup' element={<SignUp />} />
         </Routes>
       </BrowserRouter>
