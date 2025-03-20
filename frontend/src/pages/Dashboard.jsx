@@ -31,51 +31,38 @@
 // export default Banner;
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'
 
 function Dashboard() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Project Proposal",
-      description: "Finalize the Q2 project proposal with budget estimates",
-      estimatedTime: 120,
-      priority: "Urgent",
-      dueDate: "2025-03-19T17:00",
-      completed: false
-    },
-    {
-      id: 2,
-      title: "Client Meeting Preparation",
-      description: "Prepare slides and talking points for tomorrow's client meeting",
-      estimatedTime: 45,
-      priority: "High",
-      dueDate: "2025-03-20T09:00",
-      completed: false
-    },
-    {
-      id: 3,
-      title: "Weekly Team Report",
-      description: "Compile team progress report for the past week",
-      estimatedTime: 60,
-      priority: "Medium",
-      dueDate: "2025-03-22T15:00",
-      completed: true
-    },
-    {
-      id: 4,
-      title: "Update Documentation",
-      description: "Update the API documentation with new endpoints",
-      estimatedTime: 30,
-      priority: "Low",
-      dueDate: "2025-03-19T12:00",
-      completed: true
+  const [tasks, setTasks] = useState([]);
+
+  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const userID = user?.user.id
+  console.log(userID)
+  const getAllUserTasks = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`)
+
+
+      setTasks(response.data.tasks)
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to fetch tasks');
+      }
+
+      return data.tasks;
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      throw error;
     }
-  ]);
+  };
 
 
-
-
+  useEffect(() => {
+    // fetchAllTasks()
+    getAllUserTasks()
+  }, [])
 
   const getPriorityColor = (priority) => {
     switch (priority) {

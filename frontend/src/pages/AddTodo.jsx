@@ -1,9 +1,15 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AddTodo = () => {
-    const navigate = useNavigate()
+
+    const navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem("user")) || null;
+    const userID = user?.user.id
+    console.log(userID)
 
     const [newTask, setNewTask] = useState({
         title: '',
@@ -21,22 +27,35 @@ const AddTodo = () => {
         }));
     };
 
-    const addTask = () => {
+    const addTask = async () => {
         if (!newTask.title.trim()) {
             alert('Task title is required');
             return;
         }
+console.log(newTask)
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
+                userID,
+                newTask
+            });
 
-        console.log('Task added:', newTask);
-
-        setNewTask({
-            title: '',
-            description: '',
-            estimatedTime: '',
-            priority: 'Low',
-            dueDate: ''
-        });
-        navigate('/dashboard')
+            if (response.status === 200) {
+                console.log("Task added successfully");
+                setNewTask({
+                    title: '',
+                    description: '',
+                    estimatedTime: '',
+                    priority: 'Low',
+                    dueDate: ''
+                });
+                // Optional: Refresh tasks or navigate
+                // navigate('/dashboard')
+            } else {
+                console.log("Can't add task, server returned:", response.status);
+            }
+        } catch (error) {
+            console.error('An error occurred while adding task:', error);
+        }
     };
 
     return (
