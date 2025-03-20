@@ -64,9 +64,15 @@ const Home= () => {
             ))}
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <button className={`px-4 py-2 text-indigo-600 font-medium hover:text-indigo-700 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>Sign In</button>
             <Link 
-              to="/app" 
+              to="/login" 
+              className={`px-4 py-2 text-indigo-600 font-medium hover:text-indigo-700 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
+              style={{transitionDelay: '200ms'}}
+            >
+              Sign In
+            </Link>
+            <Link 
+              to="/signup" 
               className={`px-4 py-2 bg-indigo-600 text-white rounded-md font-medium hover:bg-indigo-700 transition-all duration-700 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
               style={{transitionDelay: '200ms'}}
             >

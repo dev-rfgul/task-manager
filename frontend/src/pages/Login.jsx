@@ -26,7 +26,7 @@ const Login = () => {
                 if (userData.role === "admin") {
                     navigate('/admin', { state: { user: userData } }); // Redirect to admin page
                 } else {
-                    navigate('/home', { state: { user: userData } });
+                    navigate('/dashboard', { state: { user: userData } });
                     // Redirect to user page
                 }
             })
