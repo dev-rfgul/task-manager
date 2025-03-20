@@ -73,40 +73,9 @@ function Dashboard() {
     }
   ]);
 
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    estimatedTime: 30,
-    priority: "High",
-    dueDate: ""
-  });
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setNewTask({
-      ...newTask,
-      [id]: value
-    });
-  };
 
-  const addTask = () => {
-    if (!newTask.title) return;
-    
-    const task = {
-      id: Date.now(),
-      ...newTask,
-      completed: false
-    };
-    
-    setTasks([...tasks, task]);
-    setNewTask({
-      title: "",
-      description: "",
-      estimatedTime: 30,
-      priority: "High",
-      dueDate: ""
-    });
-  };
+
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -129,8 +98,8 @@ function Dashboard() {
   };
 
   const completedTasks = tasks.filter(task => task.completed).length;
-  const dueTodayTasks = tasks.filter(task => 
-    !task.completed && 
+  const dueTodayTasks = tasks.filter(task =>
+    !task.completed &&
     new Date(task.dueDate).toDateString() === new Date().toDateString()
   ).length;
 
@@ -150,100 +119,12 @@ function Dashboard() {
             </div>
           </div>
         </header>
-        
+
         {/* Main Content */}
         <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left Column: Task Input */}
-          <div className="bg-white rounded-xl shadow-md p-6 md:col-span-1">
-            <h2 className="text-lg font-semibold mb-4">Add New Task</h2>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="title">
-                  Task Title
-                </label>
-                <input 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                  id="title" 
-                  type="text" 
-                  placeholder="Enter task title"
-                  value={newTask.title}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="description">
-                  Description
-                </label>
-                <textarea 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                  id="description" 
-                  rows="3" 
-                  placeholder="Enter task details"
-                  value={newTask.description}
-                  onChange={handleInputChange}
-                ></textarea>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="estimatedTime">
-                    Est. Time (minutes)
-                  </label>
-                  <input 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                    id="estimatedTime" 
-                    type="number" 
-                    placeholder="30"
-                    value={newTask.estimatedTime}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="priority">
-                    Priority
-                  </label>
-                  <select 
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                    id="priority"
-                    value={newTask.priority}
-                    onChange={handleInputChange}
-                  >
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                    <option>Urgent</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-medium mb-2" htmlFor="dueDate">
-                  Due Date
-                </label>
-                <input 
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-                  id="dueDate" 
-                  type="datetime-local"
-                  value={newTask.dueDate}
-                  onChange={handleInputChange}
-                />
-              </div>
-              
-              <button 
-                type="button" 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md 
-                  transition duration-300 flex items-center justify-center"
-                onClick={addTask}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-                </svg>
-                Add Task
-              </button>
-            </form>
-          </div>
-          
+
+
           {/* Right Column: Task List */}
           <div className="bg-white rounded-xl shadow-md p-6 md:col-span-2">
             <div className="flex justify-between items-center mb-6">
@@ -254,7 +135,7 @@ function Dashboard() {
                 <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium">All</button>
               </div>
             </div>
-            
+
             {/* AI Recommendation */}
             <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-6">
               <div className="flex items-start gap-3">
@@ -269,12 +150,12 @@ function Dashboard() {
                 </div>
               </div>
             </div>
-            
+
             {/* Task List */}
             <div className="space-y-4">
               {tasks.map((task) => (
-                <div 
-                  key={task.id} 
+                <div
+                  key={task.id}
                   className={`border-l-4 ${task.completed ? 'border-gray-300 bg-gray-50 opacity-70' : getPriorityColor(task.priority)} bg-white rounded-r-lg shadow-sm p-4 flex items-center`}
                 >
                   <div className="flex-1">
@@ -302,7 +183,7 @@ function Dashboard() {
             </div>
           </div>
         </main>
-        
+
         {/* Analytics Section */}
         <section className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
@@ -316,7 +197,7 @@ function Dashboard() {
               <p className="text-xl font-semibold">{completedTasks} Tasks</p>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
             <div className="p-3 bg-red-100 rounded-full mr-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -328,7 +209,7 @@ function Dashboard() {
               <p className="text-xl font-semibold">{dueTodayTasks} Tasks</p>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
             <div className="p-3 bg-purple-100 rounded-full mr-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -340,7 +221,7 @@ function Dashboard() {
               <p className="text-xl font-semibold">86%</p>
             </div>
           </div>
-          
+
           <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
             <div className="p-3 bg-blue-100 rounded-full mr-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

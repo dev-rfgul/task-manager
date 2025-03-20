@@ -31,10 +31,15 @@ const userSchema = mongoose.Schema({
     monthlyScore: {
         type: Number,
     },
-    task_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Task',
-    }
+    task_id: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Task',
+        }
+    ]
+
+
+
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

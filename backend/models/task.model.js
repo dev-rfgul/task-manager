@@ -6,30 +6,25 @@ const taskSchema = mongoose.Schema({
         required: true,
         ref: 'User',
     },
-    mondaysTask: {
+    title: {
+        type: String,
+        required: true,
+    },
+    description: {
         type: String,
     },
-    tuesdaysTask: {
-        type: String,
+    estTime: {
+        type: Number,
     },
-    wednesdaysTask: {
-        type: String,
+    dueDate: {
+        type: Date,
     },
-    thursdaysTask: {
+    priority: {
         type: String,
-    },
-    fridaysTask: {
-        type: String,
-    },
-    saturdaysTask: {
-        type: String,
-    },
-    sundaysTask: {
-        type: String,
-    },
-    scheduledTaskByAI: {
-        type: String,
+        enum: ["low", "medium", "high", "urgent"],
+        default: 'low',
     }
+
 }, { timestamps: true });
-const Task=mongoose.model('Task',taskSchema);
+const Task = mongoose.model('Task', taskSchema);
 export default Task;

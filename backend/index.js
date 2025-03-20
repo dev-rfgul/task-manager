@@ -5,8 +5,9 @@ import cookieParser from 'cookie-parser';
 
 
 
-import userRoutes from './routes/user.routes.js';
 import {connectDB}from './config/db.js'
+import userRoutes from './routes/user.routes.js';
+import taskRoutes from './routes/task.routes.js'
 
 dotenv.config();    
 const app = express();
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/user',userRoutes);
-
+app.use('/task',taskRoutes)
 
 
 

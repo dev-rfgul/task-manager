@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home';
+import AddTodo from './pages/AddTodo';
 
 
 const App = () => {
@@ -21,13 +22,14 @@ const App = () => {
     <>
       <BrowserRouter>
         <Routes>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path='/add-todo' element={<AddTodo />} />
           <Route
             path="/"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Home />}
           />
 
-          <Route path="/signup" element={<SignUp />} />
-          
+
           <Route
             path="/login"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
