@@ -16,7 +16,7 @@ const App = () => {
   const isUserLoggedIn = !!user && !!role;
   // alert(isUserLoggedIn)
   console.log(isUserLoggedIn)
-  console.log(user?.user)
+  // console.log(user?.user)
 
   return (
     <>

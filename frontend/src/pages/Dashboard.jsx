@@ -1,34 +1,3 @@
-// // src/pages/Home.jsx
-// import React from 'react';
-
-// const Banner = () => {
-//   return (
-//     <div className="min-h-screen bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center px-6">
-//       <div className="max-w-4xl w-full text-white text-center space-y-6">
-//         <h1 className="text-4xl md:text-6xl font-bold leading-tight drop-shadow-md">
-//           Smart AI To-Do List
-//         </h1>
-//         <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-//           Organize smarter, not harder. Let AI prioritize and schedule your tasks efficiently based on deadlines and importance.
-//         </p>
-//         <button className="mt-4 px-8 py-3 bg-white text-blue-600 font-semibold rounded-xl shadow-md hover:scale-105 transition-all duration-300">
-//           Get Started
-//         </button>
-
-//         {/* Optional: Image or Illustration */}
-//         <div className="mt-10">
-//           <img
-//             src="https://www.rfgul.live/images/banner-img.png" // You can replace this with your image
-//             alt="AI Planning Illustration"
-//             className="mx-auto max-w-md w-full rounded-xl shadow-lg"
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Banner;
 
 
 import React, { useEffect, useState } from 'react';
@@ -38,32 +7,77 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]);
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
+  console.log(user)
   const userID = user?.user.id
   console.log(userID)
+  // Fix the API call function
   const getAllUserTasks = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`)
-
-
-      setTasks(response.data.tasks)
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch tasks');
-      }
-
-      return data.tasks;
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
+      setTasks(response.data.tasks);
+      return response.data.tasks;
     } catch (error) {
       console.error('Error fetching tasks:', error);
       throw error;
     }
   };
 
+  // Fix useEffect dependency
+  useEffect(() => {
+    if (userID) {
+      getAllUserTasks();
+    }
+  }, [userID]);
+
 
   useEffect(() => {
-    // fetchAllTasks()
     getAllUserTasks()
   }, [])
 
+  // Helper functions
+  function getPriorityBorderColor(priority) {
+    switch (priority) {
+      case 'High': return 'border-red-200';
+      case 'Medium': return 'border-orange-200';
+      case 'Low': return 'border-green-200';
+      default: return 'border-gray-200';
+    }
+  }
+
+  function getPriorityDotColor(priority) {
+    switch (priority) {
+      case 'High': return 'bg-red-500';
+      case 'Medium': return 'bg-orange-500';
+      case 'Low': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  }
+
+  function getPriorityBadgeColor(priority) {
+    switch (priority) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Medium': return 'bg-orange-100 text-orange-800';
+      case 'Low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  function formatDueDate(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+
+    if (date.toDateString() === today.toDateString()) {
+      return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.toDateString() === tomorrow.toDateString()) {
+      return `Tomorrow, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "Urgent": return "border-red-500";
@@ -74,15 +88,7 @@ function Dashboard() {
     }
   };
 
-  const getPriorityBadgeColor = (priority) => {
-    switch (priority) {
-      case "Urgent": return "bg-red-100 text-red-800";
-      case "High": return "bg-yellow-100 text-yellow-800";
-      case "Medium": return "bg-blue-100 text-blue-800";
-      case "Low": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-600";
-    }
-  };
+
 
   const completedTasks = tasks.filter(task => task.completed).length;
   const dueTodayTasks = tasks.filter(task =>
@@ -91,139 +97,348 @@ function Dashboard() {
   ).length;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header Section */}
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <div className="container mx-auto px-4 py-6">
+        {/* Header Section - Improved responsiveness */}
         <header className="mb-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-indigo-600">TaskSync AI</h1>
-              <p className="text-gray-600 mt-1">Your intelligent task organizer</p>
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="bg-indigo-600 text-white p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">TaskSync<span className="text-indigo-600">AI</span></h1>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">Welcome back, Alex</span>
-              <div className="w-10 h-10 bg-indigo-200 rounded-full flex items-center justify-center text-indigo-600 font-semibold">A</div>
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              {/* Search - Full width on mobile, normal on larger screens */}
+              <div className="relative flex-grow sm:flex-grow-0">
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
+                />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <div className="flex items-center gap-3">
+                <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                </button>
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">{user.user.name[0]}</div>
+                  <span className="text-sm font-medium text-gray-700 hidden sm:inline">{user.user.name}</span>
+                </div>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left Column: Task Input */}
-
-
-          {/* Right Column: Task List */}
-          <div className="bg-white rounded-xl shadow-md p-6 md:col-span-2">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-semibold">Your Tasks</h2>
-              <div className="flex gap-2">
-                <button className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-md text-sm font-medium">Today</button>
-                <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium">Week</button>
-                <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm font-medium">All</button>
+        {/* Summary Cards - Improved grid for different screen sizes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{completedTasks}</p>
+              </div>
+              <div className="p-2 bg-green-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
               </div>
             </div>
+            <div className="mt-2">
+              <span className="text-xs text-green-600 font-medium flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+                12% from yesterday
+              </span>
+            </div>
+          </div>
 
-            {/* AI Recommendation */}
-            <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="bg-indigo-100 rounded-full p-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-medium text-indigo-800">AI Recommendation</h3>
-                  <p className="text-sm text-indigo-700 mt-1">Based on your schedule, I recommend focusing on "Project Proposal" first to meet today's deadline.</p>
-                </div>
+          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Due Today</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{dueTodayTasks}</p>
+              </div>
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
             </div>
+            <div className="mt-2">
+              <span className="text-xs text-orange-600 font-medium">2 high priority</span>
+            </div>
+          </div>
 
-            {/* Task List */}
-            <div className="space-y-4">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`border-l-4 ${task.completed ? 'border-gray-300 bg-gray-50 opacity-70' : getPriorityColor(task.priority)} bg-white rounded-r-lg shadow-sm p-4 flex items-center`}
-                >
+          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Productivity</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">86%</p>
+              </div>
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2">
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div className="bg-indigo-600 h-1.5 rounded-full" style={{ width: '86%' }}></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Weekly</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{tasks.length}</p>
+              </div>
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-2">
+              <span className="text-xs text-blue-600 font-medium flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                </svg>
+                3 more than last week
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content - Improved responsive layout */}
+        <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Task Management */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-gray-800">Your Tasks</h2>
+                  <span className="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-1 rounded-full">{tasks.length}</span>
+                </div>
+                <div className="flex gap-1">
+                  <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium shadow-sm hover:bg-indigo-700 transition-colors">
+                    <span className="flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      New Task
+                    </span>
+                  </button>
+                  <button className="p-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                  </button>
+                  <button className="p-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Tab Navigation - Scrollable on small screens */}
+              <div className="flex overflow-x-auto pb-2 mb-6 border-b scrollbar-hide">
+                <button className="px-4 py-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 whitespace-nowrap">Today</button>
+                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Tomorrow</button>
+                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Upcoming</button>
+                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Completed</button>
+              </div>
+
+              {/* AI Recommendation - Responsive layout */}
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg p-3 sm:p-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <div className="bg-indigo-600 text-white rounded-full p-1.5 self-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                    </svg>
+                  </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className={`font-medium ${task.completed ? 'line-through text-gray-500' : ''}`}>{task.title}</h3>
-                      <span className={`${task.completed ? 'bg-gray-100 text-gray-600' : getPriorityBadgeColor(task.priority)} text-xs px-2 py-0.5 rounded`}>
-                        {task.completed ? 'Completed' : task.priority}
-                      </span>
+                    <h3 className="font-medium text-indigo-900">AI Suggestion</h3>
+                    <p className="text-sm text-indigo-700 mt-1">Your "Project Proposal" is due in 3 hours. Based on your calendar, I recommend working on it now for 45 minutes.</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 transition-colors">Focus Now</button>
+                      <button className="px-2 py-1 bg-white text-indigo-600 border border-indigo-200 text-xs rounded hover:bg-indigo-50 transition-colors">Snooze</button>
                     </div>
-                    <p className={`text-sm ${task.completed ? 'text-gray-500 line-through' : 'text-gray-600'} mt-1`}>{task.description}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                      <span>{task.estimatedTime} minutes</span>
-                      <span>{task.completed ? 'Completed Today' : `Due: ${new Date(task.dueDate).toLocaleString()}`}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Task List - Improved responsive layout */}
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className={`bg-white rounded-lg border ${task.completed ? 'border-gray-200' : getPriorityBorderColor(task.priority)} 
+                                shadow-sm hover:shadow-md transition-all p-3 sm:p-4 ${task.completed ? 'opacity-60' : ''}`}
+                  >
+                    <div className="flex items-start sm:items-center gap-3">
+                      <div className="pt-0.5">
+                        <input type="checkbox" checked={task.completed}
+                          className="w-5 h-5 text-indigo-600 rounded-full focus:ring-indigo-500" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <h3 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                              {task.title}
+                            </h3>
+                            <p className={`text-sm ${task.completed ? 'text-gray-400 line-through' : 'text-gray-600'} mt-1`}>
+                              {task.description}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                            <span className={`${getPriorityBadgeColor(task.priority)} text-xs px-2 py-0.5 rounded-full`}>
+                              {task.priority}
+                            </span>
+                            <div className="flex text-gray-400">
+                              <button className="p-1 hover:text-indigo-600 rounded-full hover:bg-indigo-50">
+                               {/* edit icon */}
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button className="p-1 hover:text-red-600 rounded-full hover:bg-red-50">
+                              {/* delete icon */}
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-xs">
+                          <span className="flex items-center text-gray-500">
+                         {/* est time  */}
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {task.estTime} min
+                          </span>
+                          <span className="flex items-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {task.completed ? 'Completed Today' : formatDueDate(task.dueDate)}
+                          </span>
+                          {task.tags && task.tags.map(tag => (
+                            <span key={tag} className="bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-center mt-6">
+                <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                  Show More Tasks
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Made responsive for small screens */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Add Task</h2>
+              <form>
+                <div className="space-y-4">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Task title"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      placeholder="Description"
+                      rows="2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    ></textarea>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option>High</option>
+                        <option>Medium</option>
+                        <option>Low</option>
+                      </select>
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Est. time (min)"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      />
                     </div>
                   </div>
                   <div>
-                    <button className="text-gray-400 hover:text-indigo-600">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                      </svg>
-                    </button>
+                    <input
+                      type="text"
+                      placeholder="Due date"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
                   </div>
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
+                  >
+                    Add Task
+                  </button>
                 </div>
-              ))}
+              </form>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
+              <div className="space-y-3">
+                {tasks.filter(t => !t.completed).slice(0, 6).map((task) => (
+                  <div key={task.id} className="flex items-center p-2 hover:bg-gray-50 rounded-lg">
+                    <div className={`w-2 h-2 rounded-full ${getPriorityDotColor(task.priority)} mr-2`}></div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-800">{task.title}</h4>
+                      <p className="text-xs text-gray-500">{formatDueDate(task.dueDate)}</p>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-2">
+                  <a href="#" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
+                    View All Deadlines
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </main>
-
-        {/* Analytics Section */}
-        <section className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
-            <div className="p-3 bg-green-100 rounded-full mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Completed Today</p>
-              <p className="text-xl font-semibold">{completedTasks} Tasks</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
-            <div className="p-3 bg-red-100 rounded-full mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Due Today</p>
-              <p className="text-xl font-semibold">{dueTodayTasks} Tasks</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
-            <div className="p-3 bg-purple-100 rounded-full mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Productivity</p>
-              <p className="text-xl font-semibold">86%</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-md p-6 flex items-center">
-            <div className="p-3 bg-blue-100 rounded-full mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Weekly Tasks</p>
-              <p className="text-xl font-semibold">{tasks.length} Tasks</p>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   );
+
 }
 
 export default Dashboard;
