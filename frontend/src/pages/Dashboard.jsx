@@ -80,7 +80,7 @@ function Dashboard() {
     return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
-  
+
 
   const completedTasks = tasks.filter(task => task.completed).length;
   const dueTodayTasks = tasks.filter(task =>
@@ -89,37 +89,46 @@ function Dashboard() {
   ).length;
   // console.log(tasks2)
   // Function to sort tasks based on due date
-// Replace the sortTasksByDueDate function with this:
-const sortTasksByDueDate = () => {
-  console.log('entered the sorting func');
-  if (!tasks2 || tasks2.length === 0) return; // Guard clause
-  
-  const now = new Date();
-  console.log(now);
+  // Replace the sortTasksByDueDate function with this:
+  const sortTasksByDueDate = () => {
+    console.log('entered the sorting func');
+    if (!tasks2 || tasks2.length === 0) return; // Guard clause
 
-  // Create a new array instead of mutating the original
-  const sortedTasks = [...tasks2].sort((a, b) => {
-    const dueDateA = new Date(a.dueDate);
-    const dueDateB = new Date(b.dueDate);
+    const now = new Date();
+    console.log(now);
 
-    // Calculate the difference in minutes between now and each due date
-    const minutesRemainingA = (dueDateA - now) / (1000 * 60); // Difference in minutes
-    const minutesRemainingB = (dueDateB - now) / (1000 * 60); // Difference in minutes
+    // Create a new array instead of mutating the original
+    const sortedTasks = [...tasks2].sort((a, b) => {
+      const dueDateA = new Date(a.dueDate);
+      const dueDateB = new Date(b.dueDate);
 
-    return minutesRemainingA - minutesRemainingB; // Sort by remaining minutes
-  });
-  
-  setTasks2(sortedTasks);
-  console.log(sortedTasks);
-};
+      // Calculate the difference in minutes between now and each due date
+      const minutesRemainingA = (dueDateA - now) / (1000 * 60); // Difference in minutes
+      const minutesRemainingB = (dueDateB - now) / (1000 * 60); // Difference in minutes
+
+      return minutesRemainingA - minutesRemainingB; // Sort by remaining minutes
+    });
+
+    setTasks2(sortedTasks);
+    console.log(sortedTasks);
+  };
 
 
-// Fix your second useEffect to depend on tasks2:
-useEffect(() => {
-  if (tasks2 && tasks2.length > 0) {
-    sortTasksByDueDate();
+  // Fix your second useEffect to depend on tasks2:
+  useEffect(() => {
+    if (tasks2 && tasks2.length > 0) {
+      sortTasksByDueDate();
+    }
+  }, [tasks]);
+
+  const deleteTask = async (taskID) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/task/deleteTask/${taskID}`)
+      console.log(response.data)
+    } catch (error) {
+
+    }
   }
-}, [tasks]);
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <div className="container mx-auto px-4 py-6">
@@ -340,7 +349,9 @@ useEffect(() => {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </button>
-                              <button className="p-1 hover:text-red-600 rounded-full hover:bg-red-50">
+                              <button 
+                              onClick={()=>{deleteTask(task._id)}}
+                              className="p-1 hover:text-red-600 rounded-full hover:bg-red-50">
                                 {/* delete icon */}
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

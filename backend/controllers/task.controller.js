@@ -33,8 +33,8 @@ export const addTask = async (req, res) => {
 };
 
 export const getAllTasks = async (req, res) => {
-    const userID  = req.params.id;
-    console.log(userID)
+    const userID = req.params.id;
+    // console.log(userID)
     try {
         // First, find the user to get their task_id array
         const user = await UserModel.findById(userID);
@@ -62,3 +62,18 @@ export const getAllTasks = async (req, res) => {
         return res.status(500).json({ message: "An error occurred while fetching tasks" });
     }
 }
+
+export const deleteTask= async (req, res) => {
+    const taskID  = req.params.id;
+    try {
+        const task = await TaskModel.findByIdAndDelete(taskID); // pass the ID directly
+
+        if (!task) {
+            return res.status(404).json({ message: "This task does not exist" });
+        }
+
+        res.status(200).json({ message: "Task deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred", error });
+    }
+};
