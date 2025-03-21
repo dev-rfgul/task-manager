@@ -7,17 +7,20 @@ import axios from 'axios'
 import AddTodo from './AddTodo'
 
 function Dashboard() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
+  const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  console.log(user)
+  // console.log(user)
   const userID = user?.user.id
-  console.log(userID)
+  // console.log(userID)
   // Fix the API call function
   const getAllUserTasks = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
       setTasks(response.data.tasks);
+      console.log('unsorted ', response.data.tasks)
+      setTasks2(response.data.tasks)
       return response.data.tasks;
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -31,11 +34,6 @@ function Dashboard() {
       getAllUserTasks();
     }
   }, [userID]);
-
-
-  useEffect(() => {
-    getAllUserTasks()
-  }, [])
 
   // Helper functions
   function getPriorityBorderColor(priority) {
@@ -81,24 +79,42 @@ function Dashboard() {
 
     return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "Urgent": return "border-red-500";
-      case "High": return "border-yellow-500";
-      case "Medium": return "border-blue-500";
-      case "Low": return "border-green-500";
-      default: return "border-gray-300";
-    }
-  };
 
-
+  
 
   const completedTasks = tasks.filter(task => task.completed).length;
   const dueTodayTasks = tasks.filter(task =>
     !task.completed &&
     new Date(task.dueDate).toDateString() === new Date().toDateString()
   ).length;
+  // console.log(tasks2)
+  // Function to sort tasks based on due date
+// Replace the sortTasksByDueDate function with this:
+const sortTasksByDueDate = () => {
+  console.log('entered the sorting func');
+  if (!tasks2 || tasks2.length === 0) return; // Guard clause
+  
+  const now = new Date();
+  console.log(now);
 
+  // Create a new array instead of mutating the original
+  const sortedTasks = [...tasks2].sort((a, b) => {
+    const dueDateA = new Date(a.dueDate);
+    const dueDateB = new Date(b.dueDate);
+    // console.log(dueDateA, dueDateB);
+    return dueDateA - dueDateB;
+  });
+  
+  setTasks2(sortedTasks);
+  console.log(sortedTasks);
+};
+
+// Fix your second useEffect to depend on tasks2:
+useEffect(() => {
+  if (tasks2 && tasks2.length > 0) {
+    sortTasksByDueDate();
+  }
+}, [tasks]);
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <div className="container mx-auto px-4 py-6">
@@ -287,7 +303,7 @@ function Dashboard() {
 
               {/* Task List - Improved responsive layout */}
               <div className="space-y-3">
-                {tasks.map((task) => (
+                {tasks2.map((task) => (
                   <div
                     key={task.id}
                     className={`bg-white rounded-lg border ${task.completed ? 'border-gray-200' : getPriorityBorderColor(task.priority)} 
@@ -417,12 +433,12 @@ function Dashboard() {
                 </div>
               </form>
             </div> */}
-                <AddTodo/>
+            <AddTodo />
 
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
               <div className="space-y-3">
-                {tasks.filter(t => !t.completed).slice(0, 6).map((task) => (
+                {tasks2.filter(t => !t.completed).slice(0, 6).map((task) => (
                   <div key={task.id} className="flex items-center p-2 hover:bg-gray-50 rounded-lg">
                     <div className={`w-2 h-2 rounded-full ${getPriorityDotColor(task.priority)} mr-2`}></div>
                     <div className="flex-1">
