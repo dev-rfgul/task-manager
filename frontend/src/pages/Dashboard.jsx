@@ -101,13 +101,18 @@ const sortTasksByDueDate = () => {
   const sortedTasks = [...tasks2].sort((a, b) => {
     const dueDateA = new Date(a.dueDate);
     const dueDateB = new Date(b.dueDate);
-    // console.log(dueDateA, dueDateB);
-    return dueDateA - dueDateB;
+
+    // Calculate the difference in minutes between now and each due date
+    const minutesRemainingA = (dueDateA - now) / (1000 * 60); // Difference in minutes
+    const minutesRemainingB = (dueDateB - now) / (1000 * 60); // Difference in minutes
+
+    return minutesRemainingA - minutesRemainingB; // Sort by remaining minutes
   });
   
   setTasks2(sortedTasks);
   console.log(sortedTasks);
 };
+
 
 // Fix your second useEffect to depend on tasks2:
 useEffect(() => {
