@@ -63,8 +63,8 @@ export const getAllTasks = async (req, res) => {
     }
 }
 
-export const deleteTask= async (req, res) => {
-    const taskID  = req.params.id;
+export const deleteTask = async (req, res) => {
+    const taskID = req.params.id;
     try {
         const task = await TaskModel.findByIdAndDelete(taskID); // pass the ID directly
 
@@ -75,5 +75,31 @@ export const deleteTask= async (req, res) => {
         res.status(200).json({ message: "Task deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "An error occurred", error });
+    }
+};
+
+export const updateTask = async (req, res) => {
+    const { taskID, updatedTask } = req.body;
+
+    try {
+        const task = await TaskModel.findByIdAndUpdate(
+            taskID,
+            {
+                title: updatedTask.title,
+                description: updatedTask.description,
+                estTime: updatedTask.estTime,
+                priority: updatedTask.priority,
+                dueDate: updatedTask.dueDate,
+            },
+            { new: true } // optional: returns the updated document
+        );
+
+        if (!task) {
+            return res.status(404).json({ message: "Can't find task" });
+        }
+
+        res.status(200).json({ message: "Task updated successfully", task });
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred while updating the task", error });
     }
 };

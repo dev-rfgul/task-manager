@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const AddTodo = () => {
+const AddTodo = ({ taskToEdit }) => {
 
     const navigate = useNavigate();
 
@@ -14,10 +14,15 @@ const AddTodo = () => {
     const [newTask, setNewTask] = useState({
         title: '',
         description: '',
-        estimatedTime: '',
+        estTime: '',
         priority: 'Low',
         dueDate: ''
     });
+    useEffect(() => {
+        if (taskToEdit) {
+            setNewTask(taskToEdit)
+        }
+    }, [taskToEdit])
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -27,34 +32,54 @@ const AddTodo = () => {
         }));
     };
 
-    const addTask = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
         if (!newTask.title.trim()) {
             alert('Task title is required');
             return;
         }
         console.log(newTask)
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
-                userID,
-                newTask
-            });
-
-            if (response.status === 200) {
-                console.log("Task added successfully");
-                setNewTask({
-                    title: '',
-                    description: '',
-                    estimatedTime: '',
-                    priority: 'Low',
-                    dueDate: ''
-                });
-                // Optional: Refresh tasks or navigate
-                // navigate('/dashboard')
-            } else {
-                console.log("Can't add task, server returned:", response.status);
+            if (taskToEdit) {
+                try {
+                    const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/task/updateTask`, {
+                        taskID: taskToEdit._id,
+                        updatedTask: newTask,
+                    })
+                    if (response.status===200) {
+                        console.log("task updated successfully")
+                    }
+                } catch (error) {
+                    console.error("an error occured while updating task",error)
+                }
+            }
+            else {
+                try {
+                    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
+                        userID,
+                        newTask
+                    });
+                    if (response.status === 200) {
+                        console.log("Task added successfully");
+                        setNewTask({
+                            title: '',
+                            description: '',
+                            estTime: '',
+                            priority: 'Low',
+                            dueDate: ''
+                        });
+                        // Optional: Refresh tasks or navigate
+                        // navigate('/dashboard')
+                    } else {
+                        console.log("Can't add task, server returned:", response.status);
+                    }
+                } catch (error) {
+                    console.log("an error occured while adding the task")
+                }
             }
         } catch (error) {
-            console.error('An error occurred while adding task:', error);
+            console.error('An error occurred while adding  or updating task:', error);
         }
     };
 
@@ -93,13 +118,13 @@ const AddTodo = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label htmlFor="estimatedTime" className="block text-gray-800 font-medium mb-1">
+                            <label htmlFor="estTime" className="block text-gray-800 font-medium mb-1">
                                 Est. Time (minutes)
                             </label>
                             <input
-                                id="estimatedTime"
+                                id="estTime"
                                 type="number"
-                                value={newTask.estimatedTime}
+                                value={newTask.estTime}
                                 onChange={handleInputChange}
                                 placeholder="e.g. 45"
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -138,13 +163,13 @@ const AddTodo = () => {
 
                     <button
                         type="button"
-                        onClick={addTask}
+                        onClick={handleSubmit}
                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition duration-300 flex items-center justify-center gap-2"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 010 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 010-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
                         </svg>
-                        Add Task
+                        {taskToEdit ? "Update Task" : "Add Task"}
                     </button>
                 </form>
             </div>
