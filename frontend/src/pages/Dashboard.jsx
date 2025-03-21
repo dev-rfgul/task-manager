@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 
+
+import AddTodo from './AddTodo'
+
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
 
@@ -110,6 +113,7 @@ function Dashboard() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">TaskSync<span className="text-indigo-600">AI</span></h1>
+
               </div>
             </div>
             <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -310,13 +314,13 @@ function Dashboard() {
                             </span>
                             <div className="flex text-gray-400">
                               <button className="p-1 hover:text-indigo-600 rounded-full hover:bg-indigo-50">
-                               {/* edit icon */}
+                                {/* edit icon */}
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </button>
                               <button className="p-1 hover:text-red-600 rounded-full hover:bg-red-50">
-                              {/* delete icon */}
+                                {/* delete icon */}
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
@@ -326,7 +330,7 @@ function Dashboard() {
                         </div>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-xs">
                           <span className="flex items-center text-gray-500">
-                         {/* est time  */}
+                            {/* est time  */}
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -363,7 +367,7 @@ function Dashboard() {
 
           {/* Right Sidebar - Made responsive for small screens */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+            {/* <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Add Task</h2>
               <form>
                 <div className="space-y-4">
@@ -412,7 +416,8 @@ function Dashboard() {
                   </button>
                 </div>
               </form>
-            </div>
+            </div> */}
+                <AddTodo/>
 
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>

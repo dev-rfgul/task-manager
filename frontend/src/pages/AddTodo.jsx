@@ -32,7 +32,7 @@ const AddTodo = () => {
             alert('Task title is required');
             return;
         }
-console.log(newTask)
+        console.log(newTask)
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
                 userID,
@@ -59,7 +59,7 @@ console.log(newTask)
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-indigo-200 flex items-center justify-center px-4">
+        <div className=" border border-gray-700   flex items-center justify-center px-4">
             <div className="w-full max-w-2xl bg-white/60 backdrop-blur-md shadow-xl rounded-2xl p-8 md:p-10 transition-all duration-300">
                 <h1 className="text-3xl font-bold text-indigo-700 text-center mb-6">📝 Add New Task</h1>
                 <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
