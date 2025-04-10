@@ -15,7 +15,7 @@ export const addTask = async (req, res) => {
             user_id: user._id,
             title: newTask.title,
             description: newTask.description,
-            estTime: newTask.estimatedTime,  // Map estimatedTime to estTime
+            estTime: newTask.estTime,  // Map estimatedTime to estTime
             dueDate: newTask.dueDate,
             priority: newTask.priority
         });

@@ -7,7 +7,9 @@ import cookieParser from 'cookie-parser';
 
 import {connectDB}from './config/db.js'
 import userRoutes from './routes/user.routes.js';
-import taskRoutes from './routes/task.routes.js'
+import taskRoutes from './routes/task.routes.js';
+import aiSuggestions from './routes/aiSuggestions.routes.js'
+
 
 dotenv.config();    
 const app = express();
@@ -32,6 +34,7 @@ app.get('/', (req, res) => {
 
 app.use('/user',userRoutes);
 app.use('/task',taskRoutes)
+app.use('/aiSuggestion',aiSuggestions)
 
 
 
