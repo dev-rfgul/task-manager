@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 
 
 import AddTodo from './AddTodo'
@@ -129,8 +129,14 @@ function Dashboard() {
 
     }
   }
+  const arrangeTasksByAi = async () => {
+    console.log("btn clicked")
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion`)
+    console.log(response.data.message)
 
-  
+  }
+
+
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <div className="container mx-auto px-4 py-6">
@@ -308,10 +314,12 @@ function Dashboard() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-medium text-indigo-900">AI Suggestion</h3>
-                    <p className="text-sm text-indigo-700 mt-1">Your "Project Proposal" is due in 3 hours. Based on your calendar, I recommend working on it now for 45 minutes.</p>
+                    <p className="text-sm text-indigo-700 mt-1">You Just enter the tasks and let the ai arrange it for you, just like a Virtual Assistant</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <button className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 transition-colors">Focus Now</button>
-                      <button className="px-2 py-1 bg-white text-indigo-600 border border-indigo-200 text-xs rounded hover:bg-indigo-50 transition-colors">Snooze</button>
+                      <button
+                        onClick={arrangeTasksByAi}
+                        className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 transition-colors">Arrage task </button>
+                      {/* <button className="px-2 py-1 bg-white text-indigo-600 border border-indigo-200 text-xs rounded hover:bg-indigo-50 transition-colors">Snooze</button> */}
                     </div>
                   </div>
                 </div>
@@ -453,7 +461,7 @@ function Dashboard() {
                 </div>
               </form>
             </div> */}
-            <AddTodo taskToEdit={updatedTask}/>
+            <AddTodo taskToEdit={updatedTask} />
 
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>

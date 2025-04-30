@@ -49,7 +49,7 @@ const reqData = [
       ]
     }
   ]
-  
+
 
 app.get('/', async (req, res) => {
     try {
@@ -90,6 +90,7 @@ app.get('/', async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 })
+
 
 
 export default app;
