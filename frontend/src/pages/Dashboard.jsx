@@ -10,6 +10,7 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState()
+  const [arrangedTask, setArrangedTask] = useState([]);
   const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log(user)
   const userID = user?.user.id
@@ -129,13 +130,31 @@ function Dashboard() {
 
     }
   }
+
   const arrangeTasksByAi = async () => {
-    console.log("btn clicked")
+    console.log("btn clicked");
     const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion`)
-    console.log(response.data.message)
+    const data = (response.data.message.candidates[0].content.parts[0].text)
+    console.log("the data is ", data);
 
-  }
+    // Remove the backticks (if they are around the JSON text)
+    const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
+    // Ensure cleaned data is valid JSON format
+    console.log("cleaned data: ", cleanedData);
+
+    // Now parse the JSON data
+    try {
+      const jsonData = JSON.parse(cleanedData);
+      console.log("Parsed JSON data:", jsonData);
+      setArrangedTask(jsonData);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+    }
+  };
+
+
+  console.log(arrangedTask)
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -315,6 +334,13 @@ function Dashboard() {
                   <div className="flex-1">
                     <h3 className="font-medium text-indigo-900">AI Suggestion</h3>
                     <p className="text-sm text-indigo-700 mt-1">You Just enter the tasks and let the ai arrange it for you, just like a Virtual Assistant</p>
+                    {arrangedTask.map((task) => (
+                      <>
+
+                        <h1>{task.title}</h1>
+                        <h1>{task.reason}</h1>
+                      </>
+                    ))}
                     <div className="mt-2 flex flex-wrap gap-2">
                       <button
                         onClick={arrangeTasksByAi}
