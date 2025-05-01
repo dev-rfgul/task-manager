@@ -100,3 +100,20 @@ export const updateTask = async (req, res) => {
         res.status(500).json({ message: "An error occurred while updating the task", error });
     }
 };
+
+export const updateTaskStatus = async (req, res) => {
+    const { taskID, completionStatus } = req.body;
+    console.log(completionStatus)
+    try {
+        const task = await TaskModel.findById(taskID)
+        console.log(task)
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" })
+        }
+        task.completionStatus = completionStatus;
+        await task.save();
+        res.status(200).json({ message: "Task status updated successfully", task });
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred while updating the task status", error });
+    }
+}

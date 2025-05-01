@@ -21,7 +21,7 @@ function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log(user)
   const userID = user?.user.id
-  console.log("userid",userID)
+  console.log("userid", userID)
   // Fix the API call function
   const getAllUserTasks = async () => {
     try {
@@ -160,6 +160,14 @@ function Dashboard() {
     }
   };
 
+  const updateCompletionStatus = async (taskID, completionStatus) => {
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
+      taskID,
+      completionStatus
+    })
+    console.log(response)
+
+  }
 
   console.log(arrangedTask)
 
@@ -389,68 +397,99 @@ function Dashboard() {
 
 
               {/* Task List - Improved responsive layout */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {tasks2.map((task) => (
                   <div
                     key={task.id}
-                    className={`bg-white rounded-lg border ${task.completed ? 'border-gray-200' : getPriorityBorderColor(task.priority)} 
-                                shadow-sm hover:shadow-md transition-all p-3 sm:p-4 ${task.completed ? 'opacity-60' : ''}`}
+                    className={`bg-white rounded-xl border ${task.completed ? 'border-gray-200' : getPriorityBorderColor(task.priority)} 
+                  shadow hover:shadow-lg transition-all p-4 ${task.completed ? 'opacity-60' : ''}`}
                   >
-                    <div className="flex items-start sm:items-center gap-3">
-                      <div className="pt-0.5">
-                        <input type="checkbox" checked={task.completed}
-                          className="w-5 h-5 text-indigo-600 rounded-full focus:ring-indigo-500" />
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                      {/* Checkbox */}
+                      <div className="shrink-0">
+                        <input
+                          type="checkbox"
+                          checked={task.completed}
+                          className="w-5 h-5 text-blue-600 rounded-full focus:ring-blue-500"
+                        />
                       </div>
+
+                      {/* Task Content */}
                       <div className="flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        {/* Top Row: Title + Actions */}
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                          {/* Title & Description */}
                           <div>
-                            <h3 className={`font-medium ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+                            <h3 className={`font-semibold text-lg ${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
                               {task.title}
                             </h3>
-                            <p className={`text-sm ${task.completed ? 'text-gray-400 line-through' : 'text-gray-600'} mt-1`}>
+                            <p className={`text-sm mt-1 ${task.completed ? 'text-gray-400 line-through' : 'text-gray-600'}`}>
                               {task.description}
                             </p>
                           </div>
-                          <div className="flex items-center gap-2 mt-2 sm:mt-0">
+
+                          {/* Select + Priority + Actions */}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 sm:mt-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 sm:mt-0">
+                              <select
+                                className="border border-gray-300 text-gray-700 bg-white rounded-full text-sm px-3 py-1.5 shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                onChange={(e) => updateCompletionStatus(task._id, e.target.value)}
+                                defaultValue=""
+                              >
+                                <option value="" disabled>{task.completionStatus}</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Overdue">Overdue</option>
+                              </select>
+                            </div>
+
+
                             <span className={`${getPriorityBadgeColor(task.priority)} text-xs px-2 py-0.5 rounded-full`}>
                               {task.priority}
                             </span>
-                            <div className="flex text-gray-400">
+
+                            <div className="flex items-center gap-2 text-gray-400">
                               <button
                                 onClick={() => setUpdateTask(task)}
-                                className="p-1 hover:text-indigo-600 rounded-full hover:bg-indigo-50">
-                                {/* edit icon */}
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                className="p-1 hover:text-blue-600 rounded-full hover:bg-blue-50"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </button>
                               <button
-                                onClick={() => { deleteTask(task._id) }}
-                                className="p-1 hover:text-red-600 rounded-full hover:bg-red-50">
-                                {/* delete icon */}
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                onClick={() => deleteTask(task._id)}
+                                className="p-1 hover:text-red-600 rounded-full hover:bg-red-50"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                               </button>
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-xs">
-                          <span className="flex items-center text-gray-500">
-                            {/* est time  */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+                        {/* Metadata */}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-xs text-gray-500">
+                          {/* Estimated Time */}
+                          <span className="flex items-center">
+                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             {task.estTime} min
                           </span>
-                          <span className="flex items-center text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+                          {/* Due Date */}
+                          <span className="flex items-center">
+                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             {task.completed ? 'Completed Today' : formatDueDate(task.dueDate)}
                           </span>
+
+                          {/* Tags */}
                           {task.tags && task.tags.map(tag => (
-                            <span key={tag} className="bg-gray-100 text-gray-600 rounded-full px-2 py-0.5">
+                            <span key={tag} className="bg-gray-100 text-gray-700 rounded-full px-2 py-0.5">
                               {tag}
                             </span>
                           ))}
@@ -460,6 +499,8 @@ function Dashboard() {
                   </div>
                 ))}
               </div>
+
+
 
               <div className="flex justify-center mt-6">
                 <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">

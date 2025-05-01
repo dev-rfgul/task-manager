@@ -23,6 +23,11 @@ const taskSchema = mongoose.Schema({
         type: String,
         enum: ["Low", "Medium", "High", "Urgent"],
         default: 'low',
+    },
+    completionStatus:{
+        type:String,
+        enum:["Pending","Completed","Overdue"],
+        default:"Pending"
     }
 
 }, { timestamps: true });
