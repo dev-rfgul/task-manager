@@ -1,6 +1,19 @@
 import TaskModel from '../models/task.model.js';
 import UserModel from '../models/user.model.js';
 
+
+export const getUserTasks = async (userID) => {
+    const user = await UserModel.findById(userID);
+    if (!user) throw new Error("User not found");
+
+    if (!user.task_id || user.task_id.length === 0) {
+        return []; // No tasks
+    }
+
+    const tasks = await TaskModel.find({ _id: { $in: user.task_id } });
+    return tasks;
+};
+
 export const addTask = async (req, res) => {
     const { userID, newTask } = req.body;
 
@@ -36,30 +49,14 @@ export const getAllTasks = async (req, res) => {
     const userID = req.params.id;
     // console.log(userID)
     try {
-        // First, find the user to get their task_id array
-        const user = await UserModel.findById(userID);
-
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // If the user has no tasks
-        if (!user.task_id || user.task_id.length === 0) {
-            return res.status(404).json({ message: "No tasks found for this user" });
-        }
-
-        // Then, fetch all tasks that match the IDs in the task_id array
-        const tasks = await TaskModel.find({ _id: { $in: user.task_id } });
-
+        const tasks = await getUserTasks(userID); // fetch tasks from DB
+        // console.log(tasks)
         if (!tasks || tasks.length === 0) {
             return res.status(404).json({ message: "Can't find tasks for this user" });
         }
-
-        return res.status(200).json({ message: "Fetched tasks successfully", tasks });
-
+        res.status(200).json({ message: "Fetched tasks successfully", tasks });
     } catch (error) {
-        console.error(error); // Log the actual error for debugging
-        return res.status(500).json({ message: "An error occurred while fetching tasks" });
+        return res.status(500).json({ message: "An error occurred while fetching taskss" });
     }
 }
 

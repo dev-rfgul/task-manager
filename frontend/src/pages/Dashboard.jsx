@@ -11,10 +11,17 @@ function Dashboard() {
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState()
   const [arrangedTask, setArrangedTask] = useState([]);
+  const [showAiSuggestion, setShowAiSuggestion] = useState(true);
+
+  const toggleCloseAiSuggestion = () => {
+    setShowAiSuggestion(prev => !prev);
+  };
+
+
   const user = JSON.parse(localStorage.getItem("user")) || null;
   // console.log(user)
   const userID = user?.user.id
-  // console.log(userID)
+  console.log("userid",userID)
   // Fix the API call function
   const getAllUserTasks = async () => {
     try {
@@ -133,7 +140,7 @@ function Dashboard() {
 
   const arrangeTasksByAi = async () => {
     console.log("btn clicked");
-    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion`)
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`)
     const data = (response.data.message.candidates[0].content.parts[0].text)
     console.log("the data is ", data);
 
@@ -332,33 +339,51 @@ function Dashboard() {
                     </svg>
                   </div>
 
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-indigo-900 text-xl sm:text-2xl">AI Suggestion</h3>
-                    <p className="text-sm text-indigo-700 mt-2">Enter your tasks and let the AI organize them, just like a personal assistant!</p>
-
-                    {/* Dynamically rendering task items */}
-                    <div className="mt-4 space-y-3">
-                      {arrangedTask.map((task, index) => (
-                        <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200">
-                          <h1 className="text-lg font-semibold text-indigo-800">{task.title}</h1>
-                          <p className="text-sm text-indigo-600">{task.reason}</p>
-                        </div>
-                      ))}
+                  <div className="flex-1 bg-indigo-50 p-6 rounded-xl shadow-md">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-indigo-900 text-xl sm:text-2xl">AI Suggestion</h3>
+                      <button
+                        onClick={toggleCloseAiSuggestion}
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                      >
+                        {showAiSuggestion ? 'Hide' : 'Show'}
+                      </button>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="mt-4 flex flex-wrap gap-3">
+                    <p className="text-sm text-indigo-700 mb-4">
+                      Enter your tasks and let the AI organize them, just like a personal assistant!
+                    </p>
+
+                    {showAiSuggestion && (
+                      <>
+                        <div className="space-y-4 mb-6">
+                          {arrangedTask.map((task, index) => (
+                            <div
+                              key={index}
+                              className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200"
+                            >
+                              <h1 className="text-lg font-semibold text-indigo-800">{task.title}</h1>
+                              <p className="text-sm text-indigo-600 mt-1">{task.reason}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    <div className="flex flex-wrap gap-3">
                       <button
                         onClick={arrangeTasksByAi}
-                        className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-200 ease-in-out">
+                        className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition"
+                      >
                         Arrange Tasks
                       </button>
-                      {/* Snooze button (can be styled later) */}
-                      {/* <button className="px-4 py-2 bg-white text-indigo-600 border border-indigo-300 text-sm rounded-lg hover:bg-indigo-50 transition duration-200 ease-in-out">
-          Snooze
-        </button> */}
+                      {/* Future button
+    <button className="px-4 py-2 bg-white text-indigo-600 border border-indigo-300 text-sm rounded-lg hover:bg-indigo-50 transition">
+      Snooze
+    </button> */}
                     </div>
                   </div>
+
                 </div>
               </div>
 
