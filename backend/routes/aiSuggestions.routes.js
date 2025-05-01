@@ -20,16 +20,24 @@ app.post('/:id', async (req, res) => {
   try {
     const result = await generateContent(`
             You are a helpful assistant. I will give you a list of tasks.
-            Rearrange the tasks based on:
-            1. Earliest due date (ascending)
-            2. Shortest estimated time to complete
-            3. Priority: Urgent > High > Medium > Low
+            Emotional Impact: Prioritize tasks that involve loved ones or critical situations.
+
+Urgency & Importance: Handle time-sensitive tasks first (e.g., deadlines).
+
+Time Efficiency: Give priority to quick tasks that have a significant impact.
+
+Long-Term Impact: Consider tasks that may not be urgent but are crucial for the future.
+
+Duration & Energy: Factor in how long tasks take and manage them accordingly.
+
+Arrange tasks in a human-like way, balancing emotional context, urgency, and impact.
+           
 
             Your response **must** be a JSON array of objects in the following format:
             [
               {
                 "title": "task title here",
-                "reason": "short 1-line reason why this task is at this position"
+                "reason": "short 1-line reason why you have kept this at this position",
               },
               ...
             ]

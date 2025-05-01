@@ -344,7 +344,7 @@ function Dashboard() {
                       <h3 className="font-semibold text-indigo-900 text-xl sm:text-2xl">AI Suggestion</h3>
                       <button
                         onClick={toggleCloseAiSuggestion}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
                       >
                         {showAiSuggestion ? 'Hide' : 'Show'}
                       </button>
