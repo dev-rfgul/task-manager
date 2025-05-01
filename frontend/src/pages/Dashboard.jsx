@@ -323,33 +323,45 @@ function Dashboard() {
                 <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Completed</button>
               </div>
 
-              {/* AI Recommendation - Responsive layout */}
-              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg p-3 sm:p-4 mb-6">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                  <div className="bg-indigo-600 text-white rounded-full p-1.5 self-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              {/* AI Recommendation - Enhanced Responsive Layout */}
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg p-4 sm:p-6 mb-8 shadow-md">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                  <div className="bg-indigo-600 text-white rounded-full p-3 sm:p-4 self-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-indigo-900">AI Suggestion</h3>
-                    <p className="text-sm text-indigo-700 mt-1">You Just enter the tasks and let the ai arrange it for you, just like a Virtual Assistant</p>
-                    {arrangedTask.map((task) => (
-                      <>
 
-                        <h1>{task.title}</h1>
-                        <h1>{task.reason}</h1>
-                      </>
-                    ))}
-                    <div className="mt-2 flex flex-wrap gap-2">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-indigo-900 text-xl sm:text-2xl">AI Suggestion</h3>
+                    <p className="text-sm text-indigo-700 mt-2">Enter your tasks and let the AI organize them, just like a personal assistant!</p>
+
+                    {/* Dynamically rendering task items */}
+                    <div className="mt-4 space-y-3">
+                      {arrangedTask.map((task, index) => (
+                        <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200">
+                          <h1 className="text-lg font-semibold text-indigo-800">{task.title}</h1>
+                          <p className="text-sm text-indigo-600">{task.reason}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="mt-4 flex flex-wrap gap-3">
                       <button
                         onClick={arrangeTasksByAi}
-                        className="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 transition-colors">Arrage task </button>
-                      {/* <button className="px-2 py-1 bg-white text-indigo-600 border border-indigo-200 text-xs rounded hover:bg-indigo-50 transition-colors">Snooze</button> */}
+                        className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition duration-200 ease-in-out">
+                        Arrange Tasks
+                      </button>
+                      {/* Snooze button (can be styled later) */}
+                      {/* <button className="px-4 py-2 bg-white text-indigo-600 border border-indigo-300 text-sm rounded-lg hover:bg-indigo-50 transition duration-200 ease-in-out">
+          Snooze
+        </button> */}
                     </div>
                   </div>
                 </div>
               </div>
+
 
               {/* Task List - Improved responsive layout */}
               <div className="space-y-3">
