@@ -215,7 +215,7 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Summary Cards - Improved grid for different screen sizes */}
+        {/* Summary Cards - Improved grid for different screen sizes
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
@@ -296,7 +296,7 @@ function Dashboard() {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Content - Improved responsive layout */}
         <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
