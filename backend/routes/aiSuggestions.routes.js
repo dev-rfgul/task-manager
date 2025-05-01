@@ -22,15 +22,17 @@ app.post('/:id', async (req, res) => {
             You are a helpful assistant. I will give you a list of tasks.
             Emotional Impact: Prioritize tasks that involve loved ones or critical situations.
 
-Urgency & Importance: Handle time-sensitive tasks first (e.g., deadlines).
+            Urgency & Importance: Handle time-sensitive tasks first (e.g., deadlines, the task whose deadline is near is to be completed first).
 
-Time Efficiency: Give priority to quick tasks that have a significant impact.
+            Time Efficiency: Give priority to quick tasks that have a significant impact.
 
-Long-Term Impact: Consider tasks that may not be urgent but are crucial for the future.
+            Long-Term Impact: Consider tasks that may not be urgent but are crucial for the future.
 
-Duration & Energy: Factor in how long tasks take and manage them accordingly.
+            Duration & Energy: Factor in how long tasks take and manage them accordingly.
 
-Arrange tasks in a human-like way, balancing emotional context, urgency, and impact.
+            Arrange tasks in a human-like way, balancing emotional context, urgency, and impact.
+
+            as well as keep in mind the deadline of the task.
            
 
             Your response **must** be a JSON array of objects in the following format:

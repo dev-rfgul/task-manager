@@ -3,16 +3,32 @@ import UserModel from '../models/user.model.js';
 
 
 export const getUserTasks = async (userID) => {
-    const user = await UserModel.findById(userID);
-    if (!user) throw new Error("User not found");
+    try {
+        // Fetch the user from the database
+        const user = await UserModel.findById(userID);
+        // console.log(user)
+        if (!user) throw new Error("User not found");
 
-    if (!user.task_id || user.task_id.length === 0) {
-        return []; // No tasks
+        // Check if the user has tasks
+        if (!user.task_id || user.task_id.length === 0) {
+            return []; // No tasks
+        }
+
+        // Fetch tasks based on task_ids and completion status
+        const tasks = await TaskModel.find({
+            _id: { $in: user.task_id },
+            completionStatus: 'Pending' // Ensure this matches your model field
+        });
+        // console.log(tasks)
+
+        return tasks;
+    } catch (error) {
+        // Handle error (e.g., log, or send a specific error message)
+        console.error(error);
+        throw error; // Re-throw or return a custom error response
     }
-
-    const tasks = await TaskModel.find({ _id: { $in: user.task_id } });
-    return tasks;
 };
+
 
 export const addTask = async (req, res) => {
     const { userID, newTask } = req.body;
@@ -50,6 +66,7 @@ export const getAllTasks = async (req, res) => {
     // console.log(userID)
     try {
         const tasks = await getUserTasks(userID); // fetch tasks from DB
+        console.log(tasks)
         // console.log(tasks)
         if (!tasks || tasks.length === 0) {
             return res.status(404).json({ message: "Can't find tasks for this user" });

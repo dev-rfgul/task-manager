@@ -16,10 +16,11 @@ const app = express();
 app.use(express.json())
 connectDB();
 app.use(cookieParser());    
-
+const allowedOrigins = ['https://task-ai-tau.vercel.app','http://localhost:5173']
 const corsOptions = {
     Credential:true,
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     Credentials:true,
 }
 
