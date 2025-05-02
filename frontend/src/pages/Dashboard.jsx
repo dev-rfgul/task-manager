@@ -3,15 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LoaderScreen from '../components/Loader';
-
+import { Link } from 'react-router-dom';
 import AddTodo from './AddTodo'
+import AiSuggestion from '../components/AiSuggestion';
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState() // store the updated task data
-  const [arrangedTask, setArrangedTask] = useState([]); //store the task coming from the ai and after being converted into json 
-  const [showAiSuggestion, setShowAiSuggestion] = useState(true); // to toggle the ai suggestion bar 
   const [filteredTask, setFilteredTasks] = useState([]) // filter teh tasks for today,tomorrow and upcoming and completed 
   const [activeFilter, setActiveFilter] = useState("Pending"); // to show the active selection of filtering in today , tomorrow and upcomoing 
 
@@ -24,14 +23,10 @@ function Dashboard() {
     setErrorMsg("");
   };
 
-  const toggleCloseAiSuggestion = () => {
-    setShowAiSuggestion(prev => !prev);
-  };
-
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  const aiTaskFromLS=JSON.parse(localStorage.getItem('arrangedByAi'))
-  console.log("aitaksfrom ls" ,aiTaskFromLS)
+  const aiTaskFromLS = JSON.parse(localStorage.getItem('arrangedByAi'))
+  console.log("aitaksfrom ls", aiTaskFromLS)
   // console.log(user)
   const userID = user?.user.id
   console.log("userid", userID)
@@ -96,48 +91,7 @@ function Dashboard() {
     }
   }
 
-  const arrangeTasksByAi = async () => {
-    setStatus("loading")
 
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`);
-      const data = response.data.message.candidates[0].content.parts[0].text;
-      console.log("the data is ", data);
-
-      const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      console.log("cleaned data: ", cleanedData);
-
-      // Try parsing the cleaned JSON
-      const jsonData = JSON.parse(cleanedData);
-      console.log("Parsed JSON data:", jsonData);
-      localStorage.setItem('arrangedByAi', JSON.stringify(jsonData))
-
-      setArrangedTask(jsonData);
-      setStatus("idle");
-
-    } catch (error) {
-      if (error.response) {
-        // Axios error with a server response
-        console.error("Axios error:", error.response.data.message);
-        setStatus("error");
-        setErrorMsg(error.response.data.message)
-
-        // alert(`Error: ${error.response.data.message}`);
-      } else if (error instanceof SyntaxError) {
-        // JSON.parse error
-        console.error("JSON parsing error:", error.message);
-        setStatus("error")
-        setErrorMsg(error.response)
-        // alert(`JSON Parsing Error: ${error.message}`);
-      } else {
-        // Other unexpected errors
-        console.error("Unexpected error:", error.message);
-        setStatus("error")
-        setErrorMsg(error.response)
-        // alert(`Unexpected Error: ${error.message}`);
-      }
-    }
-  };
 
 
   const updateCompletionStatus = async (taskID, completionStatus) => {
@@ -274,17 +228,7 @@ function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-4 w-full sm:w-auto">
-              {/* Search - Full width on mobile, normal on larger screens */}
-              <div className="relative flex-grow sm:flex-grow-0">
-                <input
-                  type="text"
-                  placeholder="Search tasks..."
-                  className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64"
-                />
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
+       
               <div className="flex items-center gap-3">
                 <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -313,24 +257,18 @@ function Dashboard() {
                   <span className="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-1 rounded-full">{tasks.length}</span>
                 </div>
                 <div className="flex gap-1">
-                  <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium shadow-sm hover:bg-indigo-700 transition-colors">
-                    <span className="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      New Task
-                    </span>
-                  </button>
-                  <button className="p-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                    </svg>
-                  </button>
-                  <button className="p-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
-                    </svg>
-                  </button>
+                  <Link to='/add-todo'>
+                    <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium shadow-sm hover:bg-indigo-700 transition-colors">
+                      <span className="flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        New Task
+                      </span>
+                    </button>
+                  </Link>
+
+       
                 </div>
               </div>
 
@@ -362,63 +300,6 @@ function Dashboard() {
               </div>
 
 
-              {/* AI Recommendation - Enhanced Responsive Layout */}
-              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg p-4 sm:p-6 mb-8 shadow-md">
-                <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                  <div className="bg-indigo-600 text-white rounded-full p-3 sm:p-4 self-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-
-                  <div className="flex-1 bg-indigo-50 p-6 rounded-xl shadow-md">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-indigo-900 text-xl sm:text-2xl">AI Suggestion</h3>
-                      <button
-                        onClick={toggleCloseAiSuggestion}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
-                      >
-                        {showAiSuggestion ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-
-                    <p className="text-sm text-indigo-700 mb-4">
-                      Enter your tasks and let the AI organize them, just like a personal assistant!
-                    </p>
-
-                    {showAiSuggestion && (
-                      <>
-                        <div className="space-y-4 mb-6">
-                          {aiTaskFromLS.map((task, index) => (
-                            <div
-                              key={index}
-                              className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200"
-                            >
-                              <h1 className="text-lg font-semibold text-indigo-800">{task.title}</h1>
-                              <p className="text-sm text-indigo-600 mt-1">{task.reason}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    <div className="flex flex-wrap gap-3">
-                      <button
-                        onClick={arrangeTasksByAi}
-                        className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition"
-                      >
-                        Arrange Tasks
-                      </button>
-                      {/* Future button
-    <button className="px-4 py-2 bg-white text-indigo-600 border border-indigo-300 text-sm rounded-lg hover:bg-indigo-50 transition">
-      Snooze
-    </button> */}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
 
               {/* Task List - Improved responsive layout */}
               <div className="space-y-4">
@@ -429,14 +310,7 @@ function Dashboard() {
                   shadow hover:shadow-lg transition-all p-4 ${task.completed ? 'opacity-60' : ''}`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                      {/* Checkbox */}
-                      <div className="shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={task.completed}
-                          className="w-5 h-5 text-blue-600 rounded-full focus:ring-blue-500"
-                        />
-                      </div>
+
 
                       {/* Task Content */}
                       <div className="flex-1">
@@ -526,40 +400,16 @@ function Dashboard() {
 
 
 
-              <div className="flex justify-center mt-6">
-                <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
-                  Show More Tasks
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
+           
             </div>
           </div>
 
           {/* Right Sidebar - Made responsive for small screens */}
-          <div className="lg:col-span-1">
-            <AddTodo taskToEdit={updatedTask} />
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
-              <div className="space-y-3">
-                {tasks2.filter(t => !t.completed).slice(0, 6).map((task) => (
-                  <div key={task.id} className="flex items-center p-2 hover:bg-gray-50 rounded-lg">
-                    <div className={`w-2 h-2 rounded-full ${getPriorityDotColor(task.priority)} mr-2`}></div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-800">{task.title}</h4>
-                      <p className="text-xs text-gray-500">{formatDueDate(task.dueDate)}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="pt-2">
-                  <a href="#" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
-                    View All Deadlines
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="lg:col-span-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 max-h-[90vh] overflow-y-auto">
+  <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
+  <AiSuggestion />
+</div>
+
         </main>
       </div>
     </div>
