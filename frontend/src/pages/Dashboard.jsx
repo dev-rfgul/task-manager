@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import LoaderScreen from '../components/Loader';
 
 import AddTodo from './AddTodo'
 
@@ -15,7 +15,13 @@ function Dashboard() {
   const [filteredTask, setFilteredTasks] = useState([]) // filter teh tasks for today,tomorrow and upcoming and completed 
   const [activeFilter, setActiveFilter] = useState("Pending"); // to show the active selection of filtering in today , tomorrow and upcomoing 
 
+  const [status, setStatus] = useState("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
+  const handleClose = () => {
+    setStatus("idle");
+    setErrorMsg("");
+  };
 
   const toggleCloseAiSuggestion = () => {
     setShowAiSuggestion(prev => !prev);
@@ -27,7 +33,7 @@ function Dashboard() {
   const userID = user?.user.id
   console.log("userid", userID)
 
-// get all the user tasks from the db
+  // get all the user tasks from the db
   const getAllUserTasks = async (completionStatus) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
@@ -116,14 +122,6 @@ function Dashboard() {
     console.log(sortedTasks);
   };
 
-
-  // Fix your second useEffect to depend on tasks2:
-  useEffect(() => {
-    if (tasks2 && tasks2.length > 0) {
-      sortTasksByDueDate();
-    }
-  }, [tasks]);
-
   const deleteTask = async (taskID) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/task/deleteTask/${taskID}`)
@@ -135,25 +133,45 @@ function Dashboard() {
 
   const arrangeTasksByAi = async () => {
     console.log("btn clicked");
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`)
-    const data = (response.data.message.candidates[0].content.parts[0].text)
-    console.log("the data is ", data);
 
-    // Remove the backticks (if they are around the JSON text)
-    const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-
-    // Ensure cleaned data is valid JSON format
-    console.log("cleaned data: ", cleanedData);
-
-    // Now parse the JSON data
     try {
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`);
+      const data = response.data.message.candidates[0].content.parts[0].text;
+      console.log("the data is ", data);
+
+      const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      console.log("cleaned data: ", cleanedData);
+
+      // Try parsing the cleaned JSON
       const jsonData = JSON.parse(cleanedData);
       console.log("Parsed JSON data:", jsonData);
       setArrangedTask(jsonData);
+      setStatus("success");
+
     } catch (error) {
-      console.error("Error parsing JSON:", error);
+      if (error.response) {
+        // Axios error with a server response
+        console.error("Axios error:", error.response.data.message);
+        setStatus("error");
+        setErrorMsg(error.response.data.message)
+
+        // alert(`Error: ${error.response.data.message}`);
+      } else if (error instanceof SyntaxError) {
+        // JSON.parse error
+        console.error("JSON parsing error:", error.message);
+        setStatus("error")
+        setErrorMsg(error.response)
+        // alert(`JSON Parsing Error: ${error.message}`);
+      } else {
+        // Other unexpected errors
+        console.error("Unexpected error:", error.message);
+        setStatus("error")
+        setErrorMsg(error.response)
+        // alert(`Unexpected Error: ${error.message}`);
+      }
     }
   };
+
 
   const updateCompletionStatus = async (taskID, completionStatus) => {
     const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
@@ -163,7 +181,6 @@ function Dashboard() {
     console.log(response)
 
   }
-
 
   const filterTaskByCompletionStatus = (status) => {
     setActiveFilter(status)
@@ -207,10 +224,17 @@ function Dashboard() {
       filterTaskByCompletionStatus("Pending")
   }, [tasks2])
 
+  useEffect(() => {
+    if (tasks2 && tasks2.length > 0) {
+      sortTasksByDueDate();
+    }
+  }, [tasks]);
 
 
+  // console.log(user)
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen relative ">
+      <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose}/>
       <div className="container mx-auto px-4 py-6">
         {/* Header Section - Improved responsiveness */}
         <header className="mb-8">

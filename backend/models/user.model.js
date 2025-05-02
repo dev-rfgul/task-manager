@@ -36,7 +36,12 @@ const userSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Task',
         }
-    ]
+    ],
+    rateLimit: {
+        count: { type: Number, default: 0 },
+        lastReset: { type: Date, default: Date.now },
+    }
+
 
 
 

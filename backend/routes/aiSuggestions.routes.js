@@ -1,10 +1,46 @@
 import express from 'express'
 import { generateContent } from "../controllers/aiResponse.controller.js";
 import { getUserTasks } from '../controllers/task.controller.js';
+import userModel from '../models/user.model.js'
 
 
 const app = express();
 
+
+const RATE_LIMIT_MAX = 5; // example: max 5 AI calls per day
+const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+
+export const checkAndUpdateRateLimit = async (user) => {
+  const now = new Date();
+
+  if (!user.rateLimit) {
+    user.rateLimit = {
+      count: 0,
+      lastReset: now,
+    };
+  }
+
+  // Check if the reset window has passed
+  const timeSinceLastReset = now - new Date(user.rateLimit.lastReset);
+
+  if (timeSinceLastReset > RATE_LIMIT_WINDOW) {
+    // Reset limit
+    user.rateLimit.count = 1;
+    user.rateLimit.lastReset = now;
+  } else {
+    if (user.rateLimit.count >= RATE_LIMIT_MAX) {
+      // ❌ Return status instead of throwing
+      return { allowed: false, retryAfter: RATE_LIMIT_WINDOW - timeSinceLastReset };
+    }
+
+    // ✅ Still under limit, increment count
+    user.rateLimit.count += 1;
+  }
+
+  await user.save();
+
+  return { allowed: true };
+};
 
 
 
@@ -13,7 +49,18 @@ const app = express();
 
 app.post('/:id', async (req, res) => {
   const userID = req.params.id;
-  console.log(userID)
+
+  const user = await userModel.findById(userID);
+  if (!user) return res.status(404).json({ message: "User not found" });
+  // ✅ Rate limiting check
+  const rateLimitStatus=await checkAndUpdateRateLimit(user);
+
+  if (!rateLimitStatus.allowed) {
+    const minutes = Math.ceil(rateLimitStatus.retryAfter / 60000);
+    return res.status(429).json({
+      message: `Rate limit exceeded. Try again in ${minutes} minute(s).`,
+    });
+  }
   const tasks = await getUserTasks(userID); // fetch tasks from DB
   console.log(tasks)
 
@@ -50,6 +97,7 @@ app.post('/:id', async (req, res) => {
 
     // Log the response
     console.log(result)
+
 
     // Parse if it's a stringified JSON response (sometimes needed)
     let parsedResult
