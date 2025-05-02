@@ -9,10 +9,13 @@ import AddTodo from './AddTodo'
 function Dashboard() {
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
-  const [updatedTask, setUpdateTask] = useState()
-  const [arrangedTask, setArrangedTask] = useState([]);
-  const [showAiSuggestion, setShowAiSuggestion] = useState(true);
-  const [filteredTask,setFilteredTasks]=useState([])
+  const [updatedTask, setUpdateTask] = useState() // store the updated task data
+  const [arrangedTask, setArrangedTask] = useState([]); //store the task coming from the ai and after being converted into json 
+  const [showAiSuggestion, setShowAiSuggestion] = useState(true); // to toggle the ai suggestion bar 
+  const [filteredTask, setFilteredTasks] = useState([]) // filter teh tasks for today,tomorrow and upcoming and completed 
+  const [activeFilter, setActiveFilter] = useState("Pending"); // to show the active selection of filtering in today , tomorrow and upcomoing 
+
+
 
   const toggleCloseAiSuggestion = () => {
     setShowAiSuggestion(prev => !prev);
@@ -23,7 +26,8 @@ function Dashboard() {
   // console.log(user)
   const userID = user?.user.id
   console.log("userid", userID)
-  // Fix the API call function
+
+// get all the user tasks from the db
   const getAllUserTasks = async (completionStatus) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
@@ -89,16 +93,6 @@ function Dashboard() {
     return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
-
-
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const dueTodayTasks = tasks.filter(task =>
-    !task.completed &&
-    new Date(task.dueDate).toDateString() === new Date().toDateString()
-  ).length;
-  // console.log(tasks2)
-  // Function to sort tasks based on due date
-  // Replace the sortTasksByDueDate function with this:
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
@@ -169,7 +163,10 @@ function Dashboard() {
     console.log(response)
 
   }
+
+
   const filterTaskByCompletionStatus = (status) => {
+    setActiveFilter(status)
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
@@ -205,10 +202,12 @@ function Dashboard() {
     setFilteredTasks(filtered);
   };
 
+  useEffect(() => {
+    if (tasks2.length > 0)
+      filterTaskByCompletionStatus("Pending")
+  }, [tasks2])
 
-  // Example usage:
-  // const filteredTask2 = filterTaskByCompletionStatus(completionStatus);
-  // console.log(filteredTask2);
+
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -290,11 +289,31 @@ function Dashboard() {
 
               {/* Tab Navigation - Scrollable on small screens */}
               <div className="flex overflow-x-auto pb-2 mb-6 border-b scrollbar-hide">
-                <button onClick={() => { filterTaskByCompletionStatus("Pending") }} className="px-4 py-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 whitespace-nowrap">Today</button>
-                <button onClick={() => { filterTaskByCompletionStatus("Tomorrow") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Tomorrow</button>
-                <button onClick={() => { filterTaskByCompletionStatus("late") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Upcoming</button>
-                <button onClick={() => { filterTaskByCompletionStatus("Completed") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Completed</button>
+                {["Pending", "Tomorrow", "late", "Completed"].map((status) => {
+                  const labels = {
+                    Pending: "Today",
+                    Tomorrow: "Tomorrow",
+                    late: "Upcoming",
+                    Completed: "Completed"
+                  };
+
+                  const isActive = activeFilter === status;
+
+                  return (
+                    <button
+                      key={status}
+                      onClick={() => filterTaskByCompletionStatus(status)}
+                      className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${isActive
+                        ? "text-indigo-600 border-b-2 border-indigo-600"
+                        : "text-gray-500 hover:text-gray-700"
+                        }`}
+                    >
+                      {labels[status]}
+                    </button>
+                  );
+                })}
               </div>
+
 
               {/* AI Recommendation - Enhanced Responsive Layout */}
               <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-lg p-4 sm:p-6 mb-8 shadow-md">
