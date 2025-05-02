@@ -2,8 +2,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import LoaderScreen from '../components/Loader';
 const AddTodo = ({ taskToEdit }) => {
+
+
+    const [status, setStatus] = useState("idle");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+
+    const handleClose = () => {
+        setStatus("idle");
+        setErrorMsg("");
+    };
 
     const navigate = useNavigate();
 
@@ -32,62 +42,14 @@ const AddTodo = ({ taskToEdit }) => {
         }));
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault()
-
-    //     if (!newTask.title.trim()) {
-    //         alert('Task title is required');
-    //         return;
-    //     }
-    //     console.log(newTask)
-    //     try {
-    //         if (taskToEdit) {
-    //             try {
-    //                 const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/task/updateTask`, {
-    //                     taskID: taskToEdit._id,
-    //                     updatedTask: newTask,
-    //                 })
-    //                 if (response.status===200) {
-    //                     console.log("task updated successfully")
-    //                 }
-    //             } catch (error) {
-    //                 console.error("an error occured while updating task",error)
-    //             }
-    //         }
-    //         else {
-    //             try {
-    //                 const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
-    //                     userID,
-    //                     newTask
-    //                 });
-    //                 if (response.status === 200) {
-    //                     console.log("Task added successfully");
-    //                     setNewTask({
-    //                         title: '',
-    //                         description: '',
-    //                         estTime: '',
-    //                         priority: 'Low',
-    //                         dueDate: ''
-    //                     });
-    //                     // Optional: Refresh tasks or navigate
-    //                     // navigate('/dashboard')
-    //                 } else {
-    //                     console.log("Can't add task, server returned:", response.status);
-    //                 }
-    //             } catch (error) {
-    //                 console.log("an error occured while adding the task")
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('An error occurred while adding  or updating task:', error);
-    //     }
-    // };
 
     const handleSubmit = async (e) => {
+        setStatus("loading")
         e.preventDefault();
 
         if (!newTask.title.trim()) {
-            alert('Task title is required');
+            setStatus("error")
+            setErrorMsg("title is required")
             return;
         }
         console.log(newTask);
@@ -100,7 +62,8 @@ const AddTodo = ({ taskToEdit }) => {
                 });
 
                 if (response.status === 200) { // Added .status
-                    console.log("Task updated successfully");
+                    setSuccessMsg("Task updated successfully");
+                    setStatus("success")
                 }
             } else {
                 const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
@@ -109,7 +72,8 @@ const AddTodo = ({ taskToEdit }) => {
                 });
 
                 if (response.status === 200) {
-                    console.log("Task added successfully");
+                    setStatus("success")
+                    setSuccessMsg("Task Added Successfully")
                     setNewTask({
                         title: '',
                         description: '',
@@ -117,18 +81,23 @@ const AddTodo = ({ taskToEdit }) => {
                         priority: 'Low',
                         dueDate: ''
                     });
-                    // Optional: Refresh tasks or navigate
-                    // navigate('/dashboard')
+                    window.location.reload();
                 } else {
                     console.log("Can't add task, server returned:", response.status);
+                    setStatus("error")
+                    setErrorMsg(response.status)
                 }
             }
         } catch (error) {
             console.error('An error occurred while adding or updating task:', error);
+            setStatus("error")
+            setErrorMsg(error)
         }
     };
     return (
         <div className=" border border-gray-700   flex items-center justify-center px-4">
+            <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} successMessage={successMsg} />
+
             <div className="w-full max-w-2xl bg-white/60 backdrop-blur-md shadow-xl rounded-2xl p-8 md:p-10 transition-all duration-300">
                 <h1 className="text-3xl font-bold text-indigo-700 text-center mb-6">📝 Add New Task</h1>
                 <form onSubmit={(e) => e.preventDefault()} className="space-y-6">

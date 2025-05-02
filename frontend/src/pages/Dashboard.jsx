@@ -17,6 +17,7 @@ function Dashboard() {
 
   const [status, setStatus] = useState("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const handleClose = () => {
     setStatus("idle");
@@ -34,7 +35,7 @@ function Dashboard() {
   console.log("userid", userID)
 
   // get all the user tasks from the db
-  const getAllUserTasks = async (completionStatus) => {
+  const getAllUserTasks = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
       setTasks(response.data.tasks);
@@ -123,16 +124,21 @@ function Dashboard() {
   };
 
   const deleteTask = async (taskID) => {
+    setStatus("loading")
     try {
       const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/task/deleteTask/${taskID}`)
       console.log(response.data)
+      setStatus("success")
+      setSuccessMsg(response.data.message)
+      window.location.reload();
     } catch (error) {
-
+      setStatus("error")
+      setErrorMsg("Error while deleting the Task")
     }
   }
 
   const arrangeTasksByAi = async () => {
-    console.log("btn clicked");
+    setStatus("loading")
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`);
@@ -146,7 +152,7 @@ function Dashboard() {
       const jsonData = JSON.parse(cleanedData);
       console.log("Parsed JSON data:", jsonData);
       setArrangedTask(jsonData);
-      setStatus("success");
+      setStatus("idle");
 
     } catch (error) {
       if (error.response) {
@@ -174,11 +180,24 @@ function Dashboard() {
 
 
   const updateCompletionStatus = async (taskID, completionStatus) => {
-    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
-      taskID,
-      completionStatus
-    })
-    console.log(response)
+
+    try {
+      // setStatus("loading")
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
+        taskID,
+        completionStatus
+      })
+      if (!response) {
+        setStatus("error")
+        setErrorMsg(response.data.message)
+      }
+      setStatus("success")
+      setSuccessMsg("Updated successfully")
+      window.location.reload();
+    } catch (error) {
+      setStatus("error")
+      setErrorMsg("error occured while updating the task")
+    }
 
   }
 
@@ -234,7 +253,7 @@ function Dashboard() {
   // console.log(user)
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen relative ">
-      <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose}/>
+      <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} />
       <div className="container mx-auto px-4 py-6">
         {/* Header Section - Improved responsiveness */}
         <header className="mb-8">

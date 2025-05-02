@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-const LoaderScreen = ({ status, errorMessage, onClose }) => {
+const LoaderScreen = ({ status, errorMessage, onClose,successMessage }) => {
+    useEffect(() => {
+        let timer;
+
+        if (status === "success") {
+            timer = setTimeout(() => {
+                onClose();
+            }, 3000);
+        } else if (status === "error") {
+            timer = setTimeout(() => {
+                onClose();
+            }, 5000);
+        }
+
+        return () => clearTimeout(timer);
+    }, [status, onClose]);
+
     if (status === "idle") return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-100 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 backdrop-blur-sm">
             <div className="bg-white p-8 rounded-2xl shadow-2xl w-[90%] max-w-md text-center">
                 {status === "loading" ? (
                     <div className="flex flex-col items-center space-y-4">
@@ -17,6 +33,7 @@ const LoaderScreen = ({ status, errorMessage, onClose }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         <p className="text-xl font-bold">Success!</p>
+                        <p>{successMessage}</p>
                         <button
                             onClick={onClose}
                             className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
