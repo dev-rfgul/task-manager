@@ -22,14 +22,14 @@ const AiSuggestion = () => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`);
             const data = response.data.message.candidates[0].content.parts[0].text;
-            console.log("the data is ", data);
+            // console.log("the data is ", data);
 
             const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-            console.log("cleaned data: ", cleanedData);
+            // console.log("cleaned data: ", cleanedData);
 
             // Try parsing the cleaned JSON
             const jsonData = JSON.parse(cleanedData);
-            console.log("Parsed JSON data:", jsonData);
+            // console.log("Parsed JSON data:", jsonData);
             localStorage.setItem('arrangedByAi', JSON.stringify(jsonData))
 
             setArrangedTask(jsonData);

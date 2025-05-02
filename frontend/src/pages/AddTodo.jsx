@@ -41,8 +41,6 @@ const AddTodo = ({ taskToEdit }) => {
             [id]: value,
         }));
     };
-
-
     const handleSubmit = async (e) => {
         setStatus("loading")
         e.preventDefault();

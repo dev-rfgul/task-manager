@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LoaderScreen from '../components/Loader';
 import { Link } from 'react-router-dom';
-import AddTodo from './AddTodo'
 import AiSuggestion from '../components/AiSuggestion';
 
 function Dashboard() {
@@ -25,8 +24,7 @@ function Dashboard() {
 
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  const aiTaskFromLS = JSON.parse(localStorage.getItem('arrangedByAi'))
-  console.log("aitaksfrom ls", aiTaskFromLS)
+
   // console.log(user)
   const userID = user?.user.id
   console.log("userid", userID)
@@ -57,7 +55,7 @@ function Dashboard() {
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
-
+ 
     const now = new Date();
     console.log(now);
 
@@ -146,6 +144,10 @@ function Dashboard() {
       if (status === "Completed") {
         return task.completionStatus === "Completed";
       }
+      if (status === "Overdue") {
+        console.log(task.completionStatus)
+        return task.completionStatus === "Overdue"
+      }
 
       return false;
     });
@@ -228,7 +230,7 @@ function Dashboard() {
               </div>
             </div>
             <div className="flex items-center gap-4 w-full sm:w-auto">
-       
+
               <div className="flex items-center gap-3">
                 <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -254,7 +256,7 @@ function Dashboard() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold text-gray-800">Your Tasks</h2>
-                  <span className="bg-indigo-100 text-indigo-700 text-xs font-medium px-2 py-1 rounded-full">{tasks.length}</span>
+               
                 </div>
                 <div className="flex gap-1">
                   <Link to='/add-todo'>
@@ -268,18 +270,19 @@ function Dashboard() {
                     </button>
                   </Link>
 
-       
+
                 </div>
               </div>
 
               {/* Tab Navigation - Scrollable on small screens */}
               <div className="flex overflow-x-auto pb-2 mb-6 border-b scrollbar-hide">
-                {["Pending", "Tomorrow", "late", "Completed"].map((status) => {
+                {["Pending", "Tomorrow", "late", "Completed", "Overdue"].map((status) => {
                   const labels = {
                     Pending: "Today",
                     Tomorrow: "Tomorrow",
                     late: "Upcoming",
-                    Completed: "Completed"
+                    Completed: "Completed",
+                    Overdue: "Overdue"
                   };
 
                   const isActive = activeFilter === status;
@@ -400,15 +403,15 @@ function Dashboard() {
 
 
 
-           
+
             </div>
           </div>
 
           {/* Right Sidebar - Made responsive for small screens */}
           <div className="lg:col-span-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 max-h-[90vh] overflow-y-auto">
-  <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
-  <AiSuggestion />
-</div>
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
+            <AiSuggestion />
+          </div>
 
         </main>
       </div>
