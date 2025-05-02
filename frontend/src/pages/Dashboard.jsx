@@ -30,6 +30,8 @@ function Dashboard() {
 
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
+  const aiTaskFromLS=JSON.parse(localStorage.getItem('arrangedByAi'))
+  console.log("aitaksfrom ls" ,aiTaskFromLS)
   // console.log(user)
   const userID = user?.user.id
   console.log("userid", userID)
@@ -55,50 +57,7 @@ function Dashboard() {
     }
   }, [userID]);
 
-  // Helper functions
-  function getPriorityBorderColor(priority) {
-    switch (priority) {
-      case 'High': return 'border-red-200';
-      case 'Medium': return 'border-orange-200';
-      case 'Low': return 'border-green-200';
-      default: return 'border-gray-200';
-    }
-  }
 
-  function getPriorityDotColor(priority) {
-    switch (priority) {
-      case 'High': return 'bg-red-500';
-      case 'Medium': return 'bg-orange-500';
-      case 'Low': return 'bg-green-500';
-      default: return 'bg-gray-500';
-    }
-  }
-
-  function getPriorityBadgeColor(priority) {
-    switch (priority) {
-      case 'High': return 'bg-red-100 text-red-800';
-      case 'Medium': return 'bg-orange-100 text-orange-800';
-      case 'Low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  }
-
-  function formatDueDate(dateString) {
-    const date = new Date(dateString);
-    const today = new Date();
-
-    if (date.toDateString() === today.toDateString()) {
-      return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    }
-
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    if (date.toDateString() === tomorrow.toDateString()) {
-      return `Tomorrow, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-    }
-
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  }
 
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
@@ -151,6 +110,8 @@ function Dashboard() {
       // Try parsing the cleaned JSON
       const jsonData = JSON.parse(cleanedData);
       console.log("Parsed JSON data:", jsonData);
+      localStorage.setItem('arrangedByAi', JSON.stringify(jsonData))
+
       setArrangedTask(jsonData);
       setStatus("idle");
 
@@ -237,7 +198,50 @@ function Dashboard() {
 
     setFilteredTasks(filtered);
   };
+  // Helper functions
+  function getPriorityBorderColor(priority) {
+    switch (priority) {
+      case 'High': return 'border-red-200';
+      case 'Medium': return 'border-orange-200';
+      case 'Low': return 'border-green-200';
+      default: return 'border-gray-200';
+    }
+  }
 
+  function getPriorityDotColor(priority) {
+    switch (priority) {
+      case 'High': return 'bg-red-500';
+      case 'Medium': return 'bg-orange-500';
+      case 'Low': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  }
+
+  function getPriorityBadgeColor(priority) {
+    switch (priority) {
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Medium': return 'bg-orange-100 text-orange-800';
+      case 'Low': return 'bg-green-100 text-green-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  function formatDueDate(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+
+    if (date.toDateString() === today.toDateString()) {
+      return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (date.toDateString() === tomorrow.toDateString()) {
+      return `Tomorrow, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
   useEffect(() => {
     if (tasks2.length > 0)
       filterTaskByCompletionStatus("Pending")
@@ -385,7 +389,7 @@ function Dashboard() {
                     {showAiSuggestion && (
                       <>
                         <div className="space-y-4 mb-6">
-                          {arrangedTask.map((task, index) => (
+                          {aiTaskFromLS.map((task, index) => (
                             <div
                               key={index}
                               className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200"

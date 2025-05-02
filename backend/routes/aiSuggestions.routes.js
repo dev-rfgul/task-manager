@@ -7,7 +7,7 @@ import userModel from '../models/user.model.js'
 const app = express();
 
 
-const RATE_LIMIT_MAX = 5; // example: max 5 AI calls per day
+const RATE_LIMIT_MAX = 15; // example: max 5 AI calls per day
 const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
 
 export const checkAndUpdateRateLimit = async (user) => {
@@ -58,7 +58,7 @@ app.post('/:id', async (req, res) => {
   if (!rateLimitStatus.allowed) {
     const minutes = Math.ceil(rateLimitStatus.retryAfter / 60000);
     return res.status(429).json({
-      message: `Rate limit exceeded. Try again in ${minutes} minute(s).`,
+      message: `Rate limit exceeded. Try again in ${minutes/60} hour(s).`,
     });
   }
   const tasks = await getUserTasks(userID); // fetch tasks from DB
