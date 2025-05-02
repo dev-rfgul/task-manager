@@ -12,6 +12,7 @@ function Dashboard() {
   const [updatedTask, setUpdateTask] = useState()
   const [arrangedTask, setArrangedTask] = useState([]);
   const [showAiSuggestion, setShowAiSuggestion] = useState(true);
+  const [filteredTask,setFilteredTasks]=useState([])
 
   const toggleCloseAiSuggestion = () => {
     setShowAiSuggestion(prev => !prev);
@@ -23,7 +24,7 @@ function Dashboard() {
   const userID = user?.user.id
   console.log("userid", userID)
   // Fix the API call function
-  const getAllUserTasks = async () => {
+  const getAllUserTasks = async (completionStatus) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
       setTasks(response.data.tasks);
@@ -168,8 +169,46 @@ function Dashboard() {
     console.log(response)
 
   }
+  const filterTaskByCompletionStatus = (status) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-  console.log(arrangedTask)
+    const getDateOnly = (date) =>
+      new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+    const filtered = tasks2.filter(task => {
+      const taskDate = new Date(task.dueDate);
+      const taskDay = getDateOnly(taskDate);
+      const todayDay = getDateOnly(today);
+      const tomorrowDay = getDateOnly(tomorrow);
+
+      if (status === "Pending") {
+        return task.completionStatus === "Pending" && taskDay === todayDay;
+      }
+
+      if (status === "Tomorrow") {
+        return task.completionStatus === "Pending" && taskDay === tomorrowDay;
+      }
+
+      if (status === "late") {
+        return task.completionStatus === "Pending" && taskDay > tomorrowDay;
+      }
+
+      if (status === "Completed") {
+        return task.completionStatus === "Completed";
+      }
+
+      return false;
+    });
+
+    setFilteredTasks(filtered);
+  };
+
+
+  // Example usage:
+  // const filteredTask2 = filterTaskByCompletionStatus(completionStatus);
+  // console.log(filteredTask2);
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -215,88 +254,7 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Summary Cards - Improved grid for different screen sizes
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">{completedTasks}</p>
-              </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-            </div>
-            <div className="mt-2">
-              <span className="text-xs text-green-600 font-medium flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                </svg>
-                12% from yesterday
-              </span>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Due Today</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">{dueTodayTasks}</p>
-              </div>
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-            <div className="mt-2">
-              <span className="text-xs text-orange-600 font-medium">2 high priority</span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Productivity</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">86%</p>
-              </div>
-              <div className="p-2 bg-indigo-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-            </div>
-            <div className="mt-2">
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div className="bg-indigo-600 h-1.5 rounded-full" style={{ width: '86%' }}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Weekly</p>
-                <p className="text-2xl font-bold text-gray-800 mt-1">{tasks.length}</p>
-              </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-            </div>
-            <div className="mt-2">
-              <span className="text-xs text-blue-600 font-medium flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                </svg>
-                3 more than last week
-              </span>
-            </div>
-          </div>
-        </div> */}
 
         {/* Main Content - Improved responsive layout */}
         <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -332,10 +290,10 @@ function Dashboard() {
 
               {/* Tab Navigation - Scrollable on small screens */}
               <div className="flex overflow-x-auto pb-2 mb-6 border-b scrollbar-hide">
-                <button className="px-4 py-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 whitespace-nowrap">Today</button>
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Tomorrow</button>
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Upcoming</button>
-                <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Completed</button>
+                <button onClick={() => { filterTaskByCompletionStatus("Pending") }} className="px-4 py-2 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 whitespace-nowrap">Today</button>
+                <button onClick={() => { filterTaskByCompletionStatus("Tomorrow") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Tomorrow</button>
+                <button onClick={() => { filterTaskByCompletionStatus("late") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Upcoming</button>
+                <button onClick={() => { filterTaskByCompletionStatus("Completed") }} className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">Completed</button>
               </div>
 
               {/* AI Recommendation - Enhanced Responsive Layout */}
@@ -398,7 +356,7 @@ function Dashboard() {
 
               {/* Task List - Improved responsive layout */}
               <div className="space-y-4">
-                {tasks2.map((task) => (
+                {filteredTask.map((task) => (
                   <div
                     key={task.id}
                     className={`bg-white rounded-xl border ${task.completed ? 'border-gray-200' : getPriorityBorderColor(task.priority)} 
@@ -515,58 +473,7 @@ function Dashboard() {
 
           {/* Right Sidebar - Made responsive for small screens */}
           <div className="lg:col-span-1">
-            {/* <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Add Task</h2>
-              <form>
-                <div className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Task title"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <textarea
-                      placeholder="Description"
-                      rows="2"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    ></textarea>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        <option>High</option>
-                        <option>Medium</option>
-                        <option>Low</option>
-                      </select>
-                    </div>
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="Est. time (min)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Due date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm"
-                  >
-                    Add Task
-                  </button>
-                </div>
-              </form>
-            </div> */}
             <AddTodo taskToEdit={updatedTask} />
-
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
               <div className="space-y-3">

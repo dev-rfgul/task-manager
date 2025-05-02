@@ -17,7 +17,6 @@ export const getUserTasks = async (userID) => {
         // Fetch tasks based on task_ids and completion status
         const tasks = await TaskModel.find({
             _id: { $in: user.task_id },
-            completionStatus: 'Pending' // Ensure this matches your model field
         });
         // console.log(tasks)
 
@@ -28,6 +27,7 @@ export const getUserTasks = async (userID) => {
         throw error; // Re-throw or return a custom error response
     }
 };
+
 
 
 export const addTask = async (req, res) => {
