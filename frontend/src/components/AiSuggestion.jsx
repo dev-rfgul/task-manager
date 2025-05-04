@@ -1,14 +1,23 @@
 import React, { useState } from 'react'
+import axios from 'axios';
 
 const AiSuggestion = () => {
 
+    const user = JSON.parse(localStorage.getItem("user")) || null;
 
+    // console.log(user)
+    const userID = user?.user.id
+    console.log("userid", userID)
+  
     const [arrangedTask, setArrangedTask] = useState([]); //store the task coming from the ai and after being converted into json 
     const [showAiSuggestion, setShowAiSuggestion] = useState(true); // to toggle the ai suggestion bar 
 
 
-
     const aiTaskFromLS = JSON.parse(localStorage.getItem('arrangedByAi')) || []; // get the task from local storage and parse it into json
+
+    const [status, setStatus] = useState("idle");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
 
 
     const toggleCloseAiSuggestion = () => {
