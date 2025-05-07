@@ -41,6 +41,8 @@ build/Release
 # Dependency directories
 frontend/node_modules/
 backend/node_modules/
+backend/.wwebjs_auth
+backend/.wwebjs_cache
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
