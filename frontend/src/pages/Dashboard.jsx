@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LoaderScreen from '../components/Loader';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AiSuggestion from '../components/AiSuggestion';
 
 function Dashboard() {
+
+  const navigate = useNavigate()
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState() // store the updated task data
@@ -55,7 +57,7 @@ function Dashboard() {
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
- 
+
     const now = new Date();
     console.log(now);
 
@@ -89,7 +91,10 @@ function Dashboard() {
     }
   }
 
+  const updateTask = async (todo) => {
+    navigate('/add-todo', { state: { todo } })
 
+  }
 
 
   const updateCompletionStatus = async (taskID, completionStatus) => {
@@ -256,7 +261,7 @@ function Dashboard() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-semibold text-gray-800">Your Tasks</h2>
-               
+
                 </div>
                 <div className="flex gap-1">
                   <Link to='/add-todo'>
@@ -351,7 +356,7 @@ function Dashboard() {
 
                             <div className="flex items-center gap-2 text-gray-400">
                               <button
-                                onClick={() => setUpdateTask(task)}
+                                onClick={() => updateTask(task)}
                                 className="p-1 hover:text-blue-600 rounded-full hover:bg-blue-50"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -400,10 +405,6 @@ function Dashboard() {
                   </div>
                 ))}
               </div>
-
-
-
-
             </div>
           </div>
 

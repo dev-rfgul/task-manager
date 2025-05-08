@@ -28,8 +28,6 @@ export const getUserTasks = async (userID) => {
     }
 };
 
-
-
 export const addTask = async (req, res) => {
     const { userID, newTask } = req.body;
 

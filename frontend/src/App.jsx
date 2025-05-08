@@ -30,7 +30,7 @@ const App = () => {
           <Route
             path="/"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Home />}
-          />
+          />  
   
 
 
