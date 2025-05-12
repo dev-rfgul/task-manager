@@ -28,7 +28,7 @@
   client.on('message', message => {
     console.log(`📨 ${message.from}: ${message.body}`);
 
-    if (message.body.toLowerCase() === '1') {
+    if (message.body.toLowerCase() === 'hello') {
       message.reply('yes sir 🏓');
     }
   });

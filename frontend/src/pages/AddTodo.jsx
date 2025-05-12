@@ -255,6 +255,7 @@ const AddTodo = () => {
                 if (response.status === 200) {
                     setSuccessMsg("Task updated successfully");
                     setStatus("success");
+                    navigate('/dashboard')
                 }
             } else {
                 // ADD new task
