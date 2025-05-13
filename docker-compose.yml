@@ -8,6 +8,7 @@ services:
       - "80:80"
     depends_on:
       - backend
+    restart: always
     networks:
       - fullstack-network
 
@@ -18,17 +19,20 @@ services:
       - NODE_ENV=${NODE_ENV}
       - MONGO_URI=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
+      - GEMENI_API_KEY=${GEMENI_API_KEY}
     ports:
       - "5000:5000"
-    networks:
-      - fullstack-network
     depends_on:
       - mongo
+    restart: always
+    networks:
+      - fullstack-network
 
   mongo:
     image: mongo:latest
     volumes:
       - mongo-data:/data/db
+    restart: always
     networks:
       - fullstack-network
 
@@ -39,3 +43,4 @@ networks:
 volumes:
   mongo-data:
     driver: local
+

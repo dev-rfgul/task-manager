@@ -6,7 +6,10 @@
   // Create client with session persistence
   const client = new Client({
     authStrategy: new LocalAuth(), // Saves session to avoid scanning QR again
-  });
+ puppeteer: {
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  },  
+});
 
   // Show QR Code
   client.on('qr', (qr) => {
