@@ -34,7 +34,7 @@ function Dashboard() {
   // get all the user tasks from the db
   const getAllUserTasks = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`,{
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`, {
         withCredentials: true
       });
       setTasks(response.data.tasks);
@@ -100,7 +100,6 @@ function Dashboard() {
 
 
   const updateCompletionStatus = async (taskID, completionStatus) => {
-
     try {
       // setStatus("loading")
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
@@ -171,15 +170,6 @@ function Dashboard() {
     }
   }
 
-  function getPriorityDotColor(priority) {
-    switch (priority) {
-      case 'High': return 'bg-red-500';
-      case 'Medium': return 'bg-orange-500';
-      case 'Low': return 'bg-green-500';
-      default: return 'bg-gray-500';
-    }
-  }
-
   function getPriorityBadgeColor(priority) {
     switch (priority) {
       case 'High': return 'bg-red-100 text-red-800';
@@ -223,31 +213,48 @@ function Dashboard() {
       <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} />
       <div className="container mx-auto px-4 py-6">
         {/* Header Section - Improved responsiveness */}
-        <header className="mb-8">
+        <header className="mb-8 px-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            {/* Logo Section */}
             <div className="flex items-center gap-2">
               <div className="bg-indigo-600 text-white p-2 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">TaskSync<span className="text-indigo-600">AI</span></h1>
-
-              </div>
+              <h1 className="text-2xl font-bold text-gray-800">
+                TaskSync<span className="text-indigo-600">AI</span>
+              </h1>
             </div>
-            <div className="flex items-center gap-4 w-full sm:w-auto">
 
-              <div className="flex items-center gap-3">
-                <button className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
-                </button>
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold shadow-md">{user.user.name[0]}</div>
-                  <span className="text-sm font-medium text-gray-700 hidden sm:inline">{user.user.name}</span>
+            {/* Right Section */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              {/* WhatsApp Button */}
+              <button
+                onClick={() => {
+                  window.open(
+                    "https://wa.me/+923329296026?text=" + encodeURIComponent("Hello, I want alerts of my tasks on WhatsApp."),
+                    "_blank"
+                  );
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-900 text-white text-sm rounded-lg transition"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 32 32">
+                  <path d="M16 0C7.164 0 0 6.99 0 15.615c0 2.757.763 5.34 2.073 7.591L0 32l8.005-2.094A15.964 15.964 0 0016 31.23c8.836 0 16-6.99 16-15.615C32 6.99 24.836 0 16 0zm0 28.615c-2.545 0-4.946-.688-7.01-1.896l-.502-.296-4.755 1.244 1.266-4.63-.327-.475a12.892 12.892 0 01-2.045-7.047c0-7.13 5.943-12.93 13.333-12.93S29.333 8.486 29.333 15.615 23.39 28.615 16 28.615z" />
+                </svg>
+                Get Alert on WhatsApp
+              </button>
+
+
+              {/* User Info */}
+              <div className="flex items-center gap-2">
+                {/* Hide Avatar on mobile */}
+                <div className="hidden sm:flex w-10 h-10 bg-indigo-600 rounded-full items-center justify-center text-white font-semibold shadow-md">
+                  {user.user.name[0]}
                 </div>
+                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                  {user.user.name}
+                </span>
               </div>
             </div>
           </div>
@@ -255,9 +262,16 @@ function Dashboard() {
 
 
 
+
+
         {/* Main Content - Improved responsive layout */}
         <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Task Management */}
+          {/* Right Sidebar - Made responsive for small screens */}
+          <div className="lg:col-span-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
+            <AiSuggestion />
+          </div>
           <div className="lg:col-span-3">
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -410,11 +424,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Right Sidebar - Made responsive for small screens */}
-          <div className="lg:col-span-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
-            <AiSuggestion />
-          </div>
 
         </main>
       </div>

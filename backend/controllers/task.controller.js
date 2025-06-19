@@ -20,6 +20,19 @@ export const getUserTasks = async (userID) => {
         });
         // console.log(tasks)
 
+        const now = new Date();
+        const overdueTasks = tasks.filter(task =>
+            !task.completionStatus &&
+            new Date(task.dueDate) < now &&
+            task.status !== 'overdue'
+        );
+
+        // Update overdue tasks
+        await Promise.all(overdueTasks.map(task => {
+            task.status = 'overdue';
+            return task.save();
+        }));
+
         return tasks;
     } catch (error) {
         // Handle error (e.g., log, or send a specific error message)

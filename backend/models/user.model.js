@@ -40,6 +40,10 @@ const userSchema = mongoose.Schema({
     rateLimit: {
         count: { type: Number, default: 0 },
         lastReset: { type: Date, default: Date.now },
+    },
+    whatsappNumber: {
+        type: String,
+        required: false,
     }
 
 

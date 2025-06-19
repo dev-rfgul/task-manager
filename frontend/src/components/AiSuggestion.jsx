@@ -8,9 +8,9 @@ const AiSuggestion = () => {
     // console.log(user)
     const userID = user?.user.id
     console.log("userid", userID)
-  
+
     const [arrangedTask, setArrangedTask] = useState([]); //store the task coming from the ai and after being converted into json 
-    const [showAiSuggestion, setShowAiSuggestion] = useState(true); // to toggle the ai suggestion bar 
+    const [showAiSuggestion, setShowAiSuggestion] = useState(false); // to toggle the ai suggestion bar 
 
 
     const aiTaskFromLS = JSON.parse(localStorage.getItem('arrangedByAi')) || []; // get the task from local storage and parse it into json
@@ -43,6 +43,9 @@ const AiSuggestion = () => {
 
             setArrangedTask(jsonData);
             setStatus("idle");
+            setShowAiSuggestion(true);
+            setSuccessMsg("Tasks arranged successfully!");
+            setErrorMsg("");
 
         } catch (error) {
             if (error.response) {
