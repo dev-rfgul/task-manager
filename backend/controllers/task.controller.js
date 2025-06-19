@@ -75,6 +75,74 @@ export const getAllTasks = async (req, res) => {
     }
 }
 
+export const getTodayTasks = async (req, res) => {
+    const userID = req.params.id;
+    try {
+        const tasks = await getUserTasks(userID); // fetch tasks from DB
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ message: "Can't find tasks for this user" });
+        }
+        // Filter tasks for today
+        const today = new Date();
+        const todayTasks = tasks.filter(task => {
+            const dueDate = new Date(task.dueDate);
+            return dueDate.getFullYear() === today.getFullYear() &&
+                dueDate.getMonth() === today.getMonth() &&
+                dueDate.getDate() === today.getDate();
+        });
+        res.status(200).json({ message: "Fetched today's tasks successfully", tasks: todayTasks });
+    } catch (error) {
+        return res.status(500).json({ message: "An error occurred while fetching today's tasks" });
+    }
+};
+
+export const getTomorrowTasks = async (req, res) => {
+    const userID = req.params.id;
+    try {
+        const tasks = await getUserTasks(userID); // fetch tasks from DB
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ message: "Can't find tasks for this user" });
+        }
+        // Filter tasks for tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowTasks = tasks.filter(task => {
+            const dueDate = new Date(task.dueDate);
+            return dueDate.getFullYear() === tomorrow.getFullYear() &&
+                dueDate.getMonth() === tomorrow.getMonth() &&
+                dueDate.getDate() === tomorrow.getDate();
+        });
+        res.status(200).json({ message: "Fetched tomorrow's tasks successfully", tasks: tomorrowTasks });
+    } catch (error) {
+        return res.status(500).json({ message: "An error occurred while fetching tomorrow's tasks" });
+    }
+}
+
+export const getUpcomingTasks = async (req, res) => {
+    const userID = req.params.id;
+    try {
+        const tasks = await getUserTasks(userID); // fetch tasks from DB
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ message: "Can't find tasks for this user" });
+        }
+
+        const today = new Date();
+        const dayAfterTomorrow = new Date(today);
+        dayAfterTomorrow.setDate(today.getDate() + 2);
+        dayAfterTomorrow.setHours(0, 0, 0, 0); // Start of day after tomorrow
+
+        const filteredTasks = tasks.filter(task => {
+            const dueDate = new Date(task.dueDate);
+            return dueDate >= dayAfterTomorrow;
+        });
+
+        res.status(200).json({ message: "Fetched tasks for the day after tomorrow and ahead successfully", tasks: filteredTasks });
+    } catch (error) {
+        return res.status(500).json({ message: "An error occurred while fetching tasks" });
+    }
+};
+
+
 export const deleteTask = async (req, res) => {
     const taskID = req.params.id;
     try {

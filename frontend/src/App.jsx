@@ -18,7 +18,6 @@ const App = () => {
   // alert(isUserLoggedIn)
   console.log(isUserLoggedIn)
   // console.log(user?.user)
-
   return (
     <>
       <BrowserRouter>
@@ -31,14 +30,10 @@ const App = () => {
             path="/"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Home />}
           />  
-  
-
-
           <Route
             path="/login"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Login />}
           />
-
           <Route
             path="/dashboard"
             element={isUserLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
