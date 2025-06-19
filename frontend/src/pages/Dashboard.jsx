@@ -34,7 +34,9 @@ function Dashboard() {
   // get all the user tasks from the db
   const getAllUserTasks = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`,{
+        withCredentials: true
+      });
       setTasks(response.data.tasks);
       console.log('unsorted ', response.data.tasks)
       setTasks2(response.data.tasks)
