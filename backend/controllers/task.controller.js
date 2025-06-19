@@ -142,7 +142,6 @@ export const getUpcomingTasks = async (req, res) => {
     }
 };
 
-
 export const deleteTask = async (req, res) => {
     const taskID = req.params.id;
     try {

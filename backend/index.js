@@ -16,13 +16,13 @@ dotenv.config();
 const app = express();
 app.use(express.json())
 connectDB();
+
 app.use(cookieParser());
 const allowedOrigins = ['task-ai-tau.vercel.app', 'http://localhost:5173']
 const corsOptions = {
-    Credential: true,
     origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    Credentials: true,
+    credentials: true,
 }
 
 app.use(cors(corsOptions));
