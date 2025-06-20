@@ -18,7 +18,7 @@ app.use(express.json())
 connectDB();
 
 app.use(cookieParser());
-const allowedOrigins = ['https://task-ai-tau.vercel.app', 'http://localhost:5173','http://www.taskai.studio','https://www.taskai.studio']
+const allowedOrigins = ['https://task-ai-tau.vercel.app', 'http://localhost:5173', 'http://www.taskai.studio', 'https://www.taskai.studio']
 const corsOptions = {
     origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -43,7 +43,7 @@ app.use('/whatsapp', whatsapp)
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
 });
 
 export default app;

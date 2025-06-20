@@ -9,6 +9,7 @@ import AiSuggestion from '../components/AiSuggestion';
 function Dashboard() {
 
   const navigate = useNavigate()
+const user2 = { whatsappCode: "LinkMe_123456" }; // You should fetch this from the backend or user context
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState() // store the updated task data
@@ -232,8 +233,9 @@ function Dashboard() {
               {/* WhatsApp Button */}
               <button
                 onClick={() => {
+                  const message = `Hi, please link my WhatsApp with code: ${user2.whatsappCode}`;
                   window.open(
-                    "https://wa.me/+923329296026?text=" + encodeURIComponent("Hello, I want alerts of my tasks on WhatsApp."),
+                    `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
                     "_blank"
                   );
                 }}
@@ -244,7 +246,6 @@ function Dashboard() {
                 </svg>
                 Get Alert on WhatsApp
               </button>
-
 
               {/* User Info */}
               <div className="flex items-center gap-2">
