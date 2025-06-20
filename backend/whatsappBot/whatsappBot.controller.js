@@ -1,9 +1,7 @@
-// /backend/controllers/taskReminderController.js
-import User from '../models/user.model.js'; // Import the User model
-import Task from '../models/task.model.js'; // Import the Task model
-import client from '../whatsapp.bot.js'; // Import the WhatsApp client
+import User from '../models/User.js';
+import Task from '../models/Task.js';
 
-export const sendReminder = async(req, res) => {
+export const getTodaysTasks = async (whatsappNumber) => {
     const user = await User.findOne({ whatsappNumber });
     if (!user) {
         throw new Error('User not found');
@@ -19,5 +17,10 @@ export const sendReminder = async(req, res) => {
         }
     });
     return tasks;
-};
+
+}
+
+export const sendReminder = async () => {
+
+}
 
