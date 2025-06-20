@@ -70,6 +70,7 @@ import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import { addWhatsappSubscriber } from './controllers/user.controller.js';
+import { getTodaysTasks } from './whatsappBot/whatsappBot.controller.js';
 
 // Store registered users to track their state
 const registeredUsers = new Set();
@@ -100,9 +101,9 @@ const sendMenu = async (chatId) => {
 Please select an option by sending the number:
 
 *0* - 📋 Show this menu again
-*1* - 📊 View your account status
-*2* - 📞 Contact support
-*3* - 💰 Check pricing plans
+*1* - 📊 Today's Task
+*2* - 📞 Tomorrow's Task
+*3* - 💰 Upcoming Tasks
 *4* - 📚 View tutorials
 *5* - 🔔 Notification settings
 *6* - 📈 View analytics
@@ -117,7 +118,7 @@ Simply reply with a number (0-9) to proceed.
 };
 
 // Function to handle menu selections
-const handleMenuSelection = async (chatId, selection, userName) => {
+const handleMenuSelection = async (chatId, selection, userName, number) => {
   let responseMessage = '';
 
   switch (selection) {
@@ -125,9 +126,23 @@ const handleMenuSelection = async (chatId, selection, userName) => {
       await sendMenu(chatId);
       return;
 
-    case '1':
-      responseMessage = `📊 *Account Status*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nType *0* to return to main menu.`;
-      break;
+case '1':
+  const { tasks } = await getTodaysTasks(number);
+
+  if (!tasks || tasks.length === 0) {
+    responseMessage = `❌ No tasks found for today. Please check back later or contact support if you think this is an error.`;
+    await client.sendMessage(chatId, responseMessage);
+    return;
+  }
+
+  const taskList = tasks
+    .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
+    .join('\n');
+
+  responseMessage = `📊 *Account Status*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nYour tasks for today:\n${taskList}\n\nType *0* to return to main menu.`;
+
+  await client.sendMessage(chatId, responseMessage);
+  break;
 
     case '2':
       responseMessage = `📞 *Contact Support*\n\nOur support team is here to help!\n\n📧 Email: support@example.com\n📱 Phone: +1-800-123-4567\n⏰ Hours: 9 AM - 6 PM (Mon-Fri)\n\nType *0* to return to main menu.`;
@@ -172,6 +187,7 @@ const handleMenuSelection = async (chatId, selection, userName) => {
 // Message listener
 client.on('message', async (message) => {
   // Skip if message has no body (like images, voice notes, etc.)
+  // console.log('Received message:', message);
   if (!message.body) {
     return;
   }
@@ -232,7 +248,7 @@ client.on('message', async (message) => {
       await client.sendMessage(message.from, `👋 You have been successfully logged out!\n\nTo reconnect, please send "subscribe [your-secret-code]" again.\n\nThank you for using our service!`);
     } else if (content >= '0' && content <= '9' && content.length === 1) {
       // Handle menu selection
-      await handleMenuSelection(message.from, content, notifyName);
+      await handleMenuSelection(message.from, content, notifyName, number);
     } else if (contentLower === 'menu' || contentLower === 'help') {
       // Show menu on request
       await sendMenu(message.from);
