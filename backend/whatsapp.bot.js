@@ -70,7 +70,8 @@ import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import { addWhatsappSubscriber } from './controllers/user.controller.js';
-import { getTodaysTasks } from './whatsappBot/whatsappBot.controller.js';
+import { getTodaysTasks, getTomrrowsTasks,getUpcomingTasks } from './whatsappBot/whatsappBot.controller.js';
+
 
 // Store registered users to track their state
 const registeredUsers = new Set();
@@ -126,30 +127,50 @@ const handleMenuSelection = async (chatId, selection, userName, number) => {
       await sendMenu(chatId);
       return;
 
-case '1':
-  const { tasks } = await getTodaysTasks(number);
+    case '1':
+      const { todaysTasks } = await getTodaysTasks(number);
 
-  if (!tasks || tasks.length === 0) {
-    responseMessage = `❌ No tasks found for today. Please check back later or contact support if you think this is an error.`;
-    await client.sendMessage(chatId, responseMessage);
-    return;
-  }
+      if (!todaysTasks || todaysTasks.length === 0) {
+        responseMessage = `❌ No tasks found for today. Please check back later or contact support if you think this is an error.`;
+        await client.sendMessage(chatId, responseMessage);
+        return;
+      }
 
-  const taskList = tasks
-    .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
-    .join('\n');
+      const todaysTaskList = todaysTasks
+        .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
+        .join('\n');
 
-  responseMessage = `📊 *Account Status*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nYour tasks for today:\n${taskList}\n\nType *0* to return to main menu.`;
+      responseMessage = `📊 *Account Status*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nYour tasks for today:\n${todaysTaskList}\n\nType *0* to return to main menu.`;
 
-  await client.sendMessage(chatId, responseMessage);
-  break;
+      await client.sendMessage(chatId, responseMessage);
+      break;
 
     case '2':
-      responseMessage = `📞 *Contact Support*\n\nOur support team is here to help!\n\n📧 Email: support@example.com\n📱 Phone: +1-800-123-4567\n⏰ Hours: 9 AM - 6 PM (Mon-Fri)\n\nType *0* to return to main menu.`;
+      const { tomorrowsTasks } = await getTomrrowsTasks(number);
+      if (!tomorrowsTasks || tomorrowsTasks.length === 0) {
+        responseMessage = `❌ No tasks found for tomorrow. Please check back later or contact support if you think this is an error.`;
+        await client.sendMessage(chatId, responseMessage);
+        return;
+      }
+      const tomorrowsTaskList = tomorrowsTasks
+        .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
+        .join('\n');
+      responseMessage = `📅 *Tomorrow's Tasks*\n\nHello ${userName}!\n\nYour tasks for tomorrow:\n${tomorrowsTaskList}\n\nType *0* to return to main menu.`;
+      await client.sendMessage(chatId, responseMessage);
       break;
 
     case '3':
-      responseMessage = `💰 *Pricing Plans*\n\n🆓 *Basic Plan* - Free\n• 100 messages/month\n• Basic support\n\n⭐ *Premium Plan* - $9.99/month\n• Unlimited messages\n• Priority support\n• Advanced features\n\n💎 *Enterprise Plan* - $29.99/month\n• Everything in Premium\n• Custom integrations\n• Dedicated support\n\nType *0* to return to main menu.`;
+      const { upcomingTasks } = await getUpcomingTasks(number);
+      console.log('Upcoming Tasks:', upcomingTasks);
+      if (!upcomingTasks || upcomingTasks.length === 0) {
+        responseMessage = `❌ No upcoming tasks found. Please check back later or contact support if you think this is an error.`;
+        await client.sendMessage(chatId, responseMessage);
+        return;
+      }
+      const upcomingTaskList = upcomingTasks
+        .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
+        .join('\n');
+      responseMessage = `💰 *Upcoming Tasks*\n\nHello ${userName}!\n\nYour upcoming tasks:\n${upcomingTaskList}\n\nType *0* to return to main menu.`;
       break;
 
     case '4':
