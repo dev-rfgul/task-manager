@@ -41,12 +41,14 @@
 
 // // Export the client for use in other files
 // export default client;
-import fs from 'fs';
+
+
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
+import { addWhatsappSubscriber } from './controllers/user.controller.js';
 
-const SUBSCRIBERS_FILE = './subscribers.json';
+
 
 // Initialize WhatsApp client
 const client = new Client({
@@ -66,51 +68,39 @@ client.on('ready', () => {
   console.log('✅ WhatsApp client is ready!');
 });
 
-// Save number in local file
-function saveSubscriber(number) {
-  let data = [];
 
-  try {
-    if (fs.existsSync(SUBSCRIBERS_FILE)) {
-      const content = fs.readFileSync(SUBSCRIBERS_FILE, 'utf-8').trim();
-      data = content ? JSON.parse(content) : [];
-    }
-  } catch (err) {
-    console.error('❌ Error reading subscribers file:', err.message);
-    data = [];
-  }
-
-  if (!data.includes(number)) {
-    data.push(number);
-    try {
-      fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(data, null, 2));
-      console.log(`✅ Added new subscriber: ${number}`);
-    } catch (err) {
-      console.error('❌ Error writing to subscribers file:', err.message);
-    }
-  } else {
-    console.log(`ℹ️ ${number} is already a subscriber.`);
-  }
-}
 
 // Message listener
 client.on('message', async (message) => {
   const content = message.body.trim().toLowerCase();
   const number = message.from.split('@')[0];
+  const notifyName = message._data?.notifyName || 'Subscriber';
 
-  console.log(`📨 ${number}: ${message.body}`);
+  const secretCodeMatch = content.match(/([a-fA-F0-9]{24})$/);
+  const secretCode = secretCodeMatch ? secretCodeMatch[1] : null;
 
-  if (content.includes('subscribe') || content.includes('alert')) {
+  console.log(`📨 ${number}: ${content}`);
+  console.log(`🔑 Extracted Secret Code: ${secretCode}`);
+
+  if (secretCode) {
     try {
-      // Use sendMessage instead of reply to avoid puppeteer error
-      await client.sendMessage(message.from, '✅ You are now subscribed to WhatsApp alerts!');
-    } catch (err) {
-      console.error('❌ Failed to send message:', err.message);
-    }
+      const user = await addWhatsappSubscriber(secretCode, number);
 
-    saveSubscriber(number);
+      // ✅ Success - user was found and updated
+      await client.sendMessage(message.from, ` Welcome, ${user.name || 'Subscriber'}! \n✅ Successfully connected to WhatsApp!`);
+
+    } catch (err) {
+      // ❌ User not found or update failed
+      console.error('❌ Failed to Connect:', err.message);
+      await client.sendMessage(message.from, `❌ Failed to connect to WhatsApp. Please try again without changing the secret code.`);
+    }
+  } else {
+    // No secret code in message
+    await client.sendMessage(message.from, `❌ Failed to connect to WhatsApp. Please try again without changing the secret code.`);
   }
 });
+
+
 
 // Start the client
 client.initialize();

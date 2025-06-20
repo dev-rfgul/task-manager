@@ -9,7 +9,6 @@ import AiSuggestion from '../components/AiSuggestion';
 function Dashboard() {
 
   const navigate = useNavigate()
-const user2 = { whatsappCode: "LinkMe_123456" }; // You should fetch this from the backend or user context
   const [tasks, setTasks] = useState([]); //to store all the tasks which are unsorted
   const [tasks2, setTasks2] = useState([]) // it will store all the tasks in sorted by their due date.
   const [updatedTask, setUpdateTask] = useState() // store the updated task data
@@ -56,7 +55,14 @@ const user2 = { whatsappCode: "LinkMe_123456" }; // You should fetch this from t
   }, [userID]);
 
 
-
+  const sendWhatsappMsg = async () => {
+    alert("Do not change this message, it is used to link your WhatsApp with the app . By clicking Ok you agree to our terms and conditions.");
+    const message = `Hi, I would like to get alerts on my whatsapp and my secret code is : ${userID}`;
+    window.open(
+      `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+  }
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
@@ -232,12 +238,9 @@ const user2 = { whatsappCode: "LinkMe_123456" }; // You should fetch this from t
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
               {/* WhatsApp Button */}
               <button
+
                 onClick={() => {
-                  const message = `Hi, please link my WhatsApp with code: ${user2.whatsappCode}`;
-                  window.open(
-                    `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
-                    "_blank"
-                  );
+                  sendWhatsappMsg()
                 }}
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-900 text-white text-sm rounded-lg transition"
               >

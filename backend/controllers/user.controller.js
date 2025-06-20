@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model.js';
-
+import User from '../models/user.model.js';
+import mongoose from 'mongoose';
 export const registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
@@ -91,5 +92,27 @@ export const logoutUser = async (req, res) => {
         res.status(200).json({ message: "User logged out successfully" });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
+export const addWhatsappSubscriber = async (userID, whatsappNumber) => {
+
+
+    try {
+        const user = await UserModel.findByIdAndUpdate(
+            userID,
+            { whatsappNumber },
+            { new: true }
+        );
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return user;
+    } catch (error) {
+        // Optional: Log error or handle specific cases
+        throw new Error(`Failed to update WhatsApp number: ${error.message}`);
     }
 };
