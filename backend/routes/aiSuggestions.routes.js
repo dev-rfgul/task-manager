@@ -4,7 +4,7 @@ import { getUserTasks, tasksforAIArrangement } from '../controllers/task.control
 import userModel from '../models/user.model.js'
 
 
-const app = express();
+const router = express.Router();
 
 
 const RATE_LIMIT_MAX = 35; // example: max 5 AI calls per day
@@ -47,7 +47,7 @@ export const checkAndUpdateRateLimit = async (user) => {
 
 
 
-app.post('/:id', async (req, res) => {
+router.post('/:id', async (req, res) => {
   const userID = req.params.id;
 
   const user = await userModel.findById(userID);
@@ -117,4 +117,4 @@ app.post('/:id', async (req, res) => {
 
 
 
-export default app;
+export default router;

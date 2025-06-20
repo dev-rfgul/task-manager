@@ -32,7 +32,7 @@ client.on('message', message => {
   console.log(`📨 ${message.from}: ${message.body}`);
 
   if (message.body.toLowerCase() === 'hello') {
-    message.reply('yes sir 🏓');
+    message.reply(`yes sir 🏓 785 ${process.env.MODE}`);
   }
 });
 

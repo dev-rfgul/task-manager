@@ -14,7 +14,7 @@ const Login = () => {
 
         // Send a POST request to your backend with the provided email and password
         axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, { email, password },
-            // { withCredentials: true }
+            { withCredentials: true }
         )
             .then((result) => {
                 console.log(result);

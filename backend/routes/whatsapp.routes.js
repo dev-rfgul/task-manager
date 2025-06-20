@@ -4,11 +4,11 @@ import bodyParser from 'body-parser';
 import { sendReminder } from '../controllers/taskReminderController.js';
 
 
-const app = express();
+const router= express.Router();
 
 
 // Route to trigger WhatsApp reminder
-app.post('/send-reminder', sendReminder);
+router.post('/send-reminder', sendReminder);
 
 
-export default app;
+export default router;

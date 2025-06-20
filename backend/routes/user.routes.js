@@ -3,12 +3,12 @@ import express from 'express'
 
 import {registerUser,loginUser,logoutUser} from '../controllers/user.controller.js'
 
-const app = express();
+const router = express.Router();
 
-app.post('/register',registerUser);
-app.post('/login',loginUser);
-app.post('/logout',logoutUser);  
+router.post('/register',registerUser);
+router.post('/login',loginUser);
+router.post('/logout',logoutUser);  
 
 
 // the functionality is to be added here.
-export default app;
+export default router;
