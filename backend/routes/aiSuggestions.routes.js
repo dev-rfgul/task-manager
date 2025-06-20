@@ -1,13 +1,13 @@
 import express from 'express'
 import { generateContent } from "../controllers/aiResponse.controller.js";
-import { getUserTasks } from '../controllers/task.controller.js';
+import { getUserTasks, tasksforAIArrangement } from '../controllers/task.controller.js';
 import userModel from '../models/user.model.js'
 
 
 const app = express();
 
 
-const RATE_LIMIT_MAX = 15; // example: max 5 AI calls per day
+const RATE_LIMIT_MAX = 35; // example: max 5 AI calls per day
 const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
 
 export const checkAndUpdateRateLimit = async (user) => {
@@ -61,7 +61,8 @@ app.post('/:id', async (req, res) => {
       message: `Rate limit exceeded. Try again in ${minutes/60} hour(s).`,
     });
   }
-  const tasks = await getUserTasks(userID); // fetch tasks from DB
+  const tasks = await tasksforAIArrangement(userID); // fetch tasks from DB
+  console.log("tasks from ai suggestion",tasks)
   console.log(tasks)
 
   try {

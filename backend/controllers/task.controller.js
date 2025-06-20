@@ -21,17 +21,20 @@ export const getUserTasks = async (userID) => {
         // console.log(tasks)
 
         const now = new Date();
+
+
         const overdueTasks = tasks.filter(task =>
-            !task.completionStatus &&
-            new Date(task.dueDate) < now &&
-            task.status !== 'overdue'
+            task.completionStatus === 'Pending' &&
+            new Date(task.dueDate) < now
         );
+
 
         // Update overdue tasks
         await Promise.all(overdueTasks.map(task => {
-            task.status = 'overdue';
+            task.completionStatus = 'Overdue';
             return task.save();
         }));
+
 
         return tasks;
     } catch (error) {
@@ -40,6 +43,50 @@ export const getUserTasks = async (userID) => {
         throw error; // Re-throw or return a custom error response
     }
 };
+//it will exclude teh completed and overdue tasks and return only the pending tasks
+export const tasksforAIArrangement = async (userID) => {
+    try {
+        // Fetch the user from the database
+        const user = await UserModel.findById(userID);
+        // console.log(user)
+        if (!user) throw new Error("User not found");
+
+        // Check if the user has tasks
+        if (!user.task_id || user.task_id.length === 0) {
+            return []; // No tasks
+        }
+
+        // Fetch tasks based on task_ids and completion status
+        const tasks = await TaskModel.find({
+            _id: { $in: user.task_id },
+            completionStatus: "Pending"
+        });
+        // console.log(tasks)
+
+        const now = new Date();
+
+
+        const overdueTasks = tasks.filter(task =>
+            task.completionStatus === 'Pending' &&
+            new Date(task.dueDate) < now
+        );
+
+
+        // Update overdue tasks
+        await Promise.all(overdueTasks.map(task => {
+            task.completionStatus = 'Overdue';
+            return task.save();
+        }));
+
+
+        return tasks;
+    } catch (error) {
+        // Handle error (e.g., log, or send a specific error message)
+        console.error(error);
+        throw error; // Re-throw or return a custom error response
+    }
+};
+
 
 export const addTask = async (req, res) => {
     const { userID, newTask } = req.body;

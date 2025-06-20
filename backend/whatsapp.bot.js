@@ -1,43 +1,43 @@
-  import pkg from 'whatsapp-web.js';
-  const { Client, LocalAuth } = pkg;
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
 
-  import qrcode from 'qrcode-terminal';
+import qrcode from 'qrcode-terminal';
 
-  // Create client with session persistence
-  const client = new Client({
-    authStrategy: new LocalAuth(), // Saves session to avoid scanning QR again
- puppeteer: {
+// Create client with session persistence
+const client = new Client({
+  authStrategy: new LocalAuth(), // Saves session to avoid scanning QR again
+  puppeteer: {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  },  
+  },
 });
 
-  // Show QR Code
-  client.on('qr', (qr) => {
-    console.log('📱 Scan this QR code in your WhatsApp:');
-    qrcode.generate(qr, { small: true });
-  });
+// Show QR Code
+client.on('qr', (qr) => {
+  console.log('📱 Scan this QR code in your WhatsApp:');
+  qrcode.generate(qr, { small: true });
+});
 
-  const number= '923236229587'
-  const chatId = number + '@c.us';
-  // When client is ready
-  client.on('ready', () => {
-    console.log('✅ WhatsApp client is ready!');
-    
-    // 👇 Example message after login
-    client.sendMessage(chatId, 'Hello , what should we do now?');
-  });
+const number = '923236229587'
+const chatId = number + '@c.us';
+// When client is ready
+client.on('ready', () => {
+  console.log('✅ WhatsApp client is ready!');
 
-  // Listen to incoming messages
-  client.on('message', message => {
-    console.log(`📨 ${message.from}: ${message.body}`);
+  // 👇 Example message after login
+  client.sendMessage(chatId, 'Hello , what should we do now?');
+});
 
-    if (message.body.toLowerCase() === 'hello') {
-      message.reply('yes sir 🏓');
-    }
-  });
+// Listen to incoming messages
+client.on('message', message => {
+  console.log(`📨 ${message.from}: ${message.body}`);
 
-  // Initialize
-  client.initialize();
+  if (message.body.toLowerCase() === 'hello') {
+    message.reply('yes sir 🏓');
+  }
+});
 
-  // Export the client for use in other files
-  export default client;
+// Initialize
+client.initialize();
+
+// Export the client for use in other files
+export default client;
