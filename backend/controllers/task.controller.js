@@ -20,13 +20,14 @@ export const getUserTasks = async (userID) => {
         });
         // console.log(tasks)
 
-        const now = new Date();
 
 
-        const overdueTasks = tasks.filter(task =>
-            task.completionStatus === 'Pending' &&
-            new Date(task.dueDate) < now
-        );
+        const now = new Date(); // server time
+        const overdueTasks = tasks.filter(task => {
+            const due = new Date(task.dueDate);
+            return task.completionStatus === 'Pending' && due.getTime() < now.getTime();
+        });
+
 
 
         // Update overdue tasks
