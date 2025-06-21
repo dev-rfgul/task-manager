@@ -57,7 +57,7 @@ function Dashboard() {
 
   const sendWhatsappMsg = async () => {
     alert("Do not change this message, it is used to link your WhatsApp with the app . By clicking Ok you agree to our terms and conditions.");
-    const message = `Hi, I would like to get alerts on my whatsapp and my secret code is : ${userID}`;
+    const message = `secret code: ${userID}`;
     window.open(
       `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
       "_blank"
