@@ -1,10 +1,11 @@
 
-
+import cron from 'node-cron';
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import { addWhatsappSubscriber } from './controllers/user.controller.js';
-import { getTodaysTasks, getTomrrowsTasks, getUpcomingTasks } from './whatsappBot/whatsappBot.controller.js';
+import { getTodaysTasks, getTomrrowsTasks, getUpcomingTasks, getAllTasks } from './whatsappBot/whatsappBot.controller.js';
+
 
 // Store registered users to track their state
 const registeredUsers = new Set();
@@ -82,7 +83,7 @@ const handleMenuSelection = async (chatId, selection, userName, number) => {
     case '2':
       try {
         const { tomorrowsTasks } = await getTomrrowsTasks(number);
-        
+
         if (!tomorrowsTasks || tomorrowsTasks.length === 0) {
           responseMessage = `❌ No tasks found for tomorrow. Please check back later or contact support if you think this is an error.`;
         } else {
@@ -101,7 +102,7 @@ const handleMenuSelection = async (chatId, selection, userName, number) => {
       try {
         const { upcomingTasks } = await getUpcomingTasks(number);
         console.log('Upcoming Tasks:', upcomingTasks);
-        
+
         if (!upcomingTasks || upcomingTasks.length === 0) {
           responseMessage = `❌ No upcoming tasks found. Please check back later or contact support if you think this is an error.`;
         } else {
@@ -117,12 +118,28 @@ const handleMenuSelection = async (chatId, selection, userName, number) => {
       break;
 
     case '4':
-      responseMessage = `📚 *Tutorials*\n\nHere are some helpful resources:\n\n🎥 Getting Started Guide\n📖 User Manual\n💡 Tips & Tricks\n🔧 Advanced Features\n\n📱 Visit our website for video tutorials!\n\nType *0* to return to main menu.`;
+      try {
+        const { allTasks } = await getAllTasks(number);
+        console.log('All Tasks:', allTasks);
+        if (!allTasks || allTasks.length === 0) {
+          responseMessage = `❌ No tasks found. Please check back later or contact support if you think this is an error.`;
+        } else {
+          const taskList = allTasks
+            .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
+            .join('\n');
+          responseMessage = `📚 *All Tasks*\n\nHello ${userName}!\n\nHere are all your tasks:\n${taskList}\n\nType *0* to return to main menu.`;
+        }
+      } catch (error) {
+        console.error('Error fetching tutorials:', error);
+        responseMessage = `❌ Error fetching tutorials. Please try again later.`;
+
+      }
       break;
 
     case '5':
       responseMessage = `🔔 *Notification Settings*\n\nCurrent Settings:\n✅ Daily updates: ON\n✅ Security alerts: ON\n❌ Marketing messages: OFF\n✅ System notifications: ON\n\nTo modify settings, please visit our web portal or contact support.\n\nType *0* to return to main menu.`;
       break;
+
 
     case '6':
       responseMessage = `📈 *Analytics Dashboard*\n\nYour Activity Summary:\n📊 Messages sent this month: 45\n📈 Response rate: 98%\n⏱️ Average response time: 2 minutes\n📅 Most active day: Monday\n\nFor detailed analytics, visit our web dashboard.\n\nType *0* to return to main menu.`;
@@ -155,6 +172,7 @@ client.on('message', async (message) => {
     return;
   }
 
+
   const content = message.body.trim();
   const contentLower = content.toLowerCase();
   const number = message.from.split('@')[0];
@@ -168,7 +186,7 @@ client.on('message', async (message) => {
   if (!isRegistered) {
     // Check for exact format: "subscribe: secretcode" or "subscribe:secretcode"
     const subscribeMatch = content.match(/^secret code\s*:\s*([a-fA-F0-9]{24})$/i);
-    
+
     if (subscribeMatch) {
       const secretCode = subscribeMatch[1];
       console.log(`🔑 Processing subscription request with Secret Code: ${secretCode}`);
