@@ -1,10 +1,9 @@
 
-import cron from 'node-cron';
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
 import { addWhatsappSubscriber } from './controllers/user.controller.js';
-import { getTodaysTasks, getTomrrowsTasks, getUpcomingTasks, getAllTasks } from './whatsappBot/whatsappBot.controller.js';
+import { getTodaysTasks, getTomrrowsTasks, getUpcomingTasks, getAllTasks,sendReminderForAllUsers } from './whatsappBot/whatsappBot.controller.js';
 
 
 // Store registered users to track their state
@@ -24,8 +23,25 @@ client.on('qr', (qr) => {
   qrcode.generate(qr, { small: true });
 });
 
-client.on('ready', () => {
+client.on('ready', async () => {
   console.log('✅ WhatsApp client is ready!');
+
+  const sendReminders = async () => {
+    const reminders = await sendReminderForAllUsers();
+
+    for (const reminder of reminders) {
+      const chatId = `${reminder.number}@c.us`; // Make sure number format is correct
+      client.sendMessage(chatId, reminder.message)
+        .then(() => console.log(`✅ Reminder sent to ${reminder.number}`))
+        .catch(err => console.error(`❌ Failed to send to ${reminder.number}:`, err));
+    }
+  };
+
+  sendReminders(); // send now
+
+  // Every 3 hours
+  // setInterval(sendReminders, 5000); // 3 hours in milliseconds
+  setInterval(sendReminders, 3 * 60 * 60 * 1000); // 3 hours in milliseconds
 });
 
 // Function to send menu

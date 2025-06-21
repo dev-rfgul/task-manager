@@ -139,22 +139,33 @@ export const getAllTasks = async (whatsappNumber) => {
 export const sendReminderForAllUsers = async () => {
     try {
         const users = await User.find({});
+        const reminders = [];
 
         for (const user of users) {
             const { todaysTasks } = await getTodaysTasks(user.whatsappNumber);
 
             if (todaysTasks && todaysTasks.length > 0) {
-                const taskList = todaysTasks.map(task => `• ${task.title} (Due: ${new Date(task.dueDate).toLocaleTimeString()})`).join('\n');
+                const taskList = todaysTasks.map(task =>
+                    `• ${task.title} (Due: ${new Date(task.dueDate).toLocaleTimeString()})`
+                ).join('\n');
 
                 const message = `🔔 Reminder: You have ${todaysTasks.length} task(s) due today:\n\n${taskList}`;
 
-                await sendWhatsAppMessage(user.whatsappNumber, message); // implement this function
+                // Push to reminders array
+                reminders.push({
+                    number: user.whatsappNumber,
+                    message
+                });
             }
         }
+
+        return reminders; // array of all reminders
     } catch (err) {
-        console.error('Error in sending reminders:', err);
+        console.error('❌ Error in sending reminders:', err);
+        return [];
     }
 };
+
 
 
 
