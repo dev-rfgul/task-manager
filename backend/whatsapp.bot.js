@@ -88,7 +88,7 @@ const handleMenuSelection = async (chatId, selection, userName, number) => {
             .map((task, index) => `${index + 1}. ${task.title} - Due: ${new Date(task.dueDate).toLocaleDateString()}`)
             .join('\n');
 
-          responseMessage = ` ${process.env.MODE}📊 *Today's Tasks*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nYour tasks for today:\n${todaysTaskList}\n\nType *0* to return to main menu.`;
+          responseMessage = `📊 *Today's Tasks*\n\nHello ${userName}!\n✅ Account: Active\n📱 WhatsApp: Connected\n📅 Last Login: ${new Date().toLocaleDateString()}\n\nYour tasks for today:\n${todaysTaskList}\n\nType *0* to return to main menu.`;
         }
       } catch (error) {
         console.error('Error fetching today\'s tasks:', error);
