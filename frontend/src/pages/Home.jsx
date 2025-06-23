@@ -371,6 +371,7 @@ const Home = () => {
                     'Unlimited task',
                     '5 smart prioritizations/day',
                   ],
+                  paymentLink: '/signup'
                 },
                 {
                   title: 'Professional',
@@ -382,6 +383,7 @@ const Home = () => {
                     'WhatsApp-based task management',
                     'Weekly productivity report',
                   ],
+                  paymentLink:'https://buy.stripe.com/7sY9AVeAa56G8dt14f3F600'
                 },
                 {
                   title: 'Enterprise',
@@ -394,6 +396,7 @@ const Home = () => {
                     'Prioritization by AI as per your requirements',
                     'Advance reports about your productivity',
                   ],
+                  paymentLink: 'https://buy.stripe.com/dRmbJ34ZAdDc79pfZ93F601'
                 },
               ].map((plan, index) => (
                 <div
@@ -441,7 +444,8 @@ const Home = () => {
                     ))}
                   </ul>
                   <a
-                    href="#!"
+                    href={plan.paymentLink}
+                    target="_blank"
                     className={`block bg-indigo-500 text-white rounded-lg font-semibold text-center py-3 hover:bg-indigo-600 transition mt-6 ${animatedElements['pricing']
                       ? 'opacity-100 translate-y-0 hover:scale-105'
                       : 'opacity-0 translate-y-4'
