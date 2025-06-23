@@ -19,8 +19,8 @@ const client = new Client({
 
 // Show QR on terminal
 client.on('qr', (qr) => {
-  console.log('📱 Scan this QR code in your WhatsApp:');
-  qrcode.generate(qr, { small: true });
+  // console.log('📱 Scan this QR code in your WhatsApp:');
+  // qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', async () => {

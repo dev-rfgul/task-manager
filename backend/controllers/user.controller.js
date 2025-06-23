@@ -95,7 +95,54 @@ export const logoutUser = async (req, res) => {
     }
 };
 
+export const createGuestUser = async (req, res) => {
+    try {
+        // Generate simple unique ID using timestamp + random number
+        const timestamp = Date.now();
+        const guestEmail = `guest_${timestamp}@taskai.studio`;
+        const guestPassword = '785mcs148google4411203@taskai.studio'; // You can randomize this too
+        const guestName = `Guest_${timestamp}`;
 
+        // Check if somehow this generated email already exists
+        const existingUser = await User.findOne({ email: guestEmail });
+        if (existingUser) {
+            return res.status(400).json({ message: "Guest user already exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(guestPassword, 10);
+
+        const newUser = new User({
+            name: guestName,
+            email: guestEmail,
+            password: hashedPassword,
+            authProvider: 'guest',
+            role: 'guest'
+        });
+
+        await newUser.save();
+
+        res.status(201).json({
+            message: "Guest user created successfully",
+            newUser
+        });
+
+    } catch (error) {
+        console.error("Error during guest signup:", error);
+        res.status(500).json({ message: "Server error during guest signup" });
+    }
+};
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await UserModel.find().select('-password'); // Exclude password field
+        res.status(200).json(users.length > 0 ? users.length : { message: "No users found" });
+        console.log("All users fetched successfully",users.length);
+    }
+    catch (error) {
+        console.error("Get all users error:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
 export const addWhatsappSubscriber = async (userID, whatsappNumber) => {
 
 

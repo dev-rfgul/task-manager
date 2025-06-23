@@ -261,3 +261,16 @@ export const updateTaskStatus = async (req, res) => {
         res.status(500).json({ message: "An error occurred while updating the task status", error });
     }
 }
+
+export const getTasksCount = async (req, res) => {
+    try {
+        const tasks = await TaskModel.find();
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ message: "No tasks found" });
+        }
+        const tasksCount = tasks.length;
+        res.status(200).json({ message: "Tasks count fetched successfully", tasksCount });
+    } catch (error) {
+        res.status(500).json({ message: "An error occurred while fetching tasks count", error: error.message });
+    }
+}
