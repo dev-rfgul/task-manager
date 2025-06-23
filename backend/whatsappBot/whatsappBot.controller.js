@@ -1,5 +1,4 @@
 
-import cron from 'node-cron';
 import User from '../models/user.model.js';
 import { getUserTasks } from '../controllers/task.controller.js';
 
@@ -15,25 +14,32 @@ export const getTodaysTasks = async (whatsappNumber) => {
     if (!user) {
         throw new Error('User not found');
     }
+
     console.log('User found:', user);
+
     try {
-        const tasks = await getUserTasks(user._id); // fetch tasks from DB
+        const tasks = await getUserTasks(user._id);
         if (!tasks || tasks.length === 0) {
-            return ({ message: "Can't find tasks for this user" });
+            return { message: "Can't find tasks for this user" };
         }
-        // Filter tasks for today
+
         const today = new Date();
         const todayTasks = tasks.filter(task => {
             const dueDate = new Date(task.dueDate);
-            return dueDate.getFullYear() === today.getFullYear() &&
+            return (
+                dueDate.getFullYear() === today.getFullYear() &&
                 dueDate.getMonth() === today.getMonth() &&
-                dueDate.getDate() === today.getDate() && task.completionStatus === 'Pending';
+                dueDate.getDate() === today.getDate() &&
+                task.completionStatus === 'Pending'
+            );
         });
-        return ({ message: "Fetched today's tasks successfully", todaysTasks: todayTasks });
+
+        return { message: "Fetched today's tasks successfully", todaysTasks: todayTasks };
     } catch (error) {
-        return ({ message: "An error occurred while fetching today's tasks" });
+        return { message: "An error occurred while fetching today's tasks" };
     }
 };
+
 
 export const getTomrrowsTasks = async (whatsappNumber) => {
     console.log('Fetching tasks for WhatsApp number:', whatsappNumber);
@@ -133,39 +139,86 @@ export const getAllTasks = async (whatsappNumber) => {
     }
 };
 
+export const productivityReport = async (whatsappNumber) => {
+    console.log('Generating productivity report for WhatsApp number:', whatsappNumber);
+    if (!whatsappNumber) {
+        throw new Error('WhatsApp number is required');
+    }
+    const user = await User.findOne({ whatsappNumber });
+    if (!user) {
+        throw new Error('User not found');
+    }
+    // console.log('User found:', user);
+    try {
+        const tasks = await getUserTasks(user._id); // fetch tasks from DB
+        if (!tasks || tasks.length === 0) {
+            return { message: "Can't find tasks for this user" };
+        }
+
+        const completedTasks = tasks.filter(task => task.completionStatus === 'Completed');
+        const pendingTasks = tasks.filter(task => task.completionStatus === 'Pending');
+        const overDueTasks = tasks.filter(task =>  task.completionStatus === 'Overdue' );
+
+        const report = {
+            totalTasks: tasks.length,
+            completedTasks: completedTasks.length,
+            pendingTasks: pendingTasks.length,
+            overDueTasks: overDueTasks.length,
+            completionRate: (completedTasks.length / tasks.length * 100).toFixed(2) + '%',
+            pendingRate: (pendingTasks.length / tasks.length * 100).toFixed(2) + '%',
+            overDueRate: (overDueTasks.length / tasks.length * 100).toFixed(2) + '%',
+        };
+
+        // console.log('Productivity report generated successfully:', report);
+        return { message: "Productivity report generated successfully", report };
+    } catch (error) {
+        // console.error('Error while generating productivity report:', error);
+        return { message: "An error occurred while generating the productivity report" };
+    }
+};
 
 //will automatically send reminders to all users who have tasks due today
 
 export const sendReminderForAllUsers = async () => {
-    try {
-        const users = await User.find({});
-        const reminders = [];
+    const reminders = [];
 
-        for (const user of users) {
-            const { todaysTasks } = await getTodaysTasks(user.whatsappNumber);
+    const users = await User.find({ whatsappNumber: { $exists: true, $ne: null } });
 
-            if (todaysTasks && todaysTasks.length > 0) {
-                const taskList = todaysTasks.map(task =>
-                    `• ${task.title} (Due: ${new Date(task.dueDate).toLocaleTimeString()})`
-                ).join('\n');
+    for (const user of users) {
+        console.log(`📲 Fetching tasks for WhatsApp number: ${user.whatsappNumber}`);
+        console.log('User found:', user);
 
-                const message = `🔔 Reminder: You have ${todaysTasks.length} task(s) due today:\n\n${taskList}`;
+        // Fetch tasks using task_id array
+        const tasks = await getTodaysTasks(user.whatsappNumber);
+        console.log('Tasks fetched:', tasks);
 
-                // Push to reminders array
-                reminders.push({
-                    number: user.whatsappNumber,
-                    message
-                });
-            }
+        if (!tasks || tasks.length === 0) {
+            console.log(`ℹ️ No tasks for ${user.whatsappNumber}`);
+            reminders.push({
+                number: user.whatsappNumber,
+                message: `Hi ${user.name}, you have no tasks for today. Enjoy your day! ✅`
+            });
+            continue;
         }
 
-        return reminders; // array of all reminders
-    } catch (err) {
-        console.error('❌ Error in sending reminders:', err);
-        return [];
-    }
-};
 
+
+        if (tasks.todaysTasks.length === 0) {
+            reminders.push({
+                number: user.whatsappNumber,
+                message: `Hi ${user.name}, you have no tasks scheduled for today! ✅`
+            });
+        } else {
+            reminders.push({
+                number: user.whatsappNumber,
+                message: `Hi ${user.name}, here are your tasks for today:\n\n${tasks.todaysTasks.map(task => `- ${task.title} (Due: ${new Date(task.dueDate).toLocaleDateString()})`).join('\n')}\n\nPlease complete them on time! ⏰`
+            });
+        }
+
+    }
+
+    return reminders;
+}
 
 
 

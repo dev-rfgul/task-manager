@@ -7,7 +7,7 @@ import userModel from '../models/user.model.js'
 const router = express.Router();
 
 
-const RATE_LIMIT_MAX = 50; // example: max 5 AI calls per day
+const RATE_LIMIT_MAX = 10; // example: max 5 AI calls per day
 const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
 
 export const checkAndUpdateRateLimit = async (user) => {

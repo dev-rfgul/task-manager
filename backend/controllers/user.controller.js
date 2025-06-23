@@ -150,6 +150,8 @@ export const getAllUsers = async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 }
+
+
 export const addWhatsappSubscriber = async (userID, whatsappNumber) => {
 
 
@@ -170,3 +172,22 @@ export const addWhatsappSubscriber = async (userID, whatsappNumber) => {
         throw new Error(`Failed to update WhatsApp number: ${error.message}`);
     }
 };
+
+export const removeWhatsappSubscriber = async (number) => {
+    try {
+        const user = await UserModel.findOneAndUpdate(
+            { whatsappNumber: number },
+            { whatsappConnected: false, whatsappNumber: null },
+            { new: true }
+        );
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return user;
+    } catch (error) {
+        // Optional: Log error or handle specific cases
+        throw new Error(`Failed to remove WhatsApp subscriber: ${error.message}`);
+    }
+}

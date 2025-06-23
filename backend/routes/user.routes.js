@@ -3,7 +3,6 @@ import express from 'express'
 
 import {registerUser,loginUser,logoutUser,getAllUsers,createGuestUser} from '../controllers/user.controller.js'
 // import { get } from 'mongoose';
-
 const router = express.Router();
 
 router.post('/register',registerUser);
