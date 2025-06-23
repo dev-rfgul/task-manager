@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Footer from '../components/Footer';
+import Analytics from '../components/Analytics';
 const Home = () => {
   // States for controlling animations
   const [isVisible, setIsVisible] = useState(false);
@@ -153,7 +154,7 @@ const Home = () => {
                 }`}
               style={{ transitionDelay: '300ms' }}
             >
-              <div className="flex items-center mb-2 md:mb-0">
+              <div className="flex items-center mb-2 md:mb-0 ">
                 <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
@@ -189,26 +190,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="bg-gray-50 py-12 animate-on-scroll">
-        <div className="container mx-auto px-6">
-          <p className={`text-center text-gray-500 font-medium mb-8 transition-all duration-700 ${animatedElements['animate-on-scroll'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Trusted by productivity-focused teams worldwide</p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-70">
-            {[1, 2, 3, 4].map((company, index) => (
-              <div
-                key={company}
-                className={`h-8 transition-all duration-700 ${animatedElements['animate-on-scroll'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                <svg viewBox="0 0 100 30" fill="currentColor" className="h-full text-gray-400">
-                  <rect width="100" height="30" fill="none" />
-                  <text x="10" y="20" fontFamily="Arial" fontSize="16" fontWeight="bold">Company {company}</text>
-                </svg>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Analytics />
 
       {/* Features */}
       <section id="features" className="container mx-auto px-6 py-20 animate-on-scroll">
@@ -239,7 +221,7 @@ const Home = () => {
           ].map((feature, index) => (
             <div
               key={feature.title}
-              className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-700 hover:shadow-xl hover:-translate-y-2 ${animatedElements['features'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              className={`bg-white p-8 border-1 rounded-xl shadow-lg transition-all duration-700 hover:shadow-xl hover:-translate-y-2 ${animatedElements['features'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
               style={{ transitionDelay: `${index * 150 + 200}ms` }}
             >
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
@@ -267,20 +249,29 @@ const Home = () => {
 
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { step: "1", title: "Add Your Tasks", desc: "Write what needs to be done — with deadlines and estimated time." },
-              { step: "2", title: " AI Prioritizes Your Day", desc: "Our AI sorts tasks based on urgency, importance, and your energy levels" },
-              { step: "3", title: "Get WhatsApp Reminders", desc: "Automatic reminders every 3 hours for tasks that need your attention." },
-              { step: "4", title: "AI Gets Smarter Over Time", desc: "The more you use it, the better the suggestions and timing." }
+              { step: "1", title: "Add Your Tasks", desc: "Write what needs to be done — with deadlines and estimated time.", btnText: "Add Task" },
+              { step: "2", title: " AI Prioritizes Your Day", desc: "Our AI sorts tasks based on urgency, importance, and your energy levels", btnText: "See How" },
+              { step: "3", title: "Get WhatsApp Reminders", desc: "Automatic reminders every 3 hours for tasks that need your attention.", btnText: "Try it Now" },
+              { step: "4", title: "AI Gets Smarter Over Time", desc: "The more you use it, the better the suggestions and timing.", btnText: "Start Now" }
             ].map((step, index) => (
               <div
                 key={step.step}
-                className={`flex flex-col items-center text-center transition-all duration-700 ${animatedElements['how-it-works'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                style={{ transitionDelay: `${index * 150 + 200}ms` }}
+                className="flex flex-col bg-gray-600 rounded-2xl items-center text-center p-6 shadow-md hover:shadow-lg transition-all"
               >
-                <div className="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold mb-4 transition-transform hover:scale-110 hover:bg-indigo-700">{step.step}</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
+                <div className="w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center text-white text-lg font-bold mb-4">
+                  {step.step}
+                </div>
+                <h3 className="text-base md:text-lg font-semibold text-white mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-sm text-gray-300 mb-4">
+                  {step.desc}
+                </p>
+                <button className="mt-auto px-5 py-2.5 bg-white text-gray-900 font-medium rounded-lg border border-white hover:bg-gray-100 hover:border-gray-300 transition-all">
+                  {step.btnText}
+                </button>
               </div>
+
             ))}
           </div>
 
@@ -332,7 +323,7 @@ const Home = () => {
               textColor: "text-pink-600"
             }
           ].map((testimonial, index) => (
-            <div key={testimonial.name} className="bg-white p-8 rounded-xl shadow-lg">
+            <div key={testimonial.name} className="bg-white p-8  border-1 rounded-xl shadow-lg">
               <div className="flex items-center mb-4">
                 <div className={`w-12 h-12 ${testimonial.bgColor} rounded-full flex items-center justify-center ${testimonial.textColor} font-bold mr-4`}>
                   {testimonial.initials}
@@ -366,103 +357,103 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div
-              className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-700 hover:shadow-xl hover:-translate-y-2 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            >
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Basic</h3>
-              <p className="text-gray-600 mb-4">Perfect for getting started</p>
-              <div className={`flex items-center justify-center bg-indigo-600 text-white font-bold rounded-lg h-12 w-24 mb-4 transition-all duration-500 ${animatedElements['pricing'] ? 'scale-100' : 'scale-0'}`} style={{ transitionDelay: '300ms' }}>
-                $0
-              </div>
-              <p className="text-gray-600 mb-4">Per user / month</p>
-              <ul className="text-gray-600">
-                {['Task reminders every 3-4 hours', 'Unlimited task ', '5 smart prioritizations/day'].map((feature, i) => (
-                  <li
-                    key={feature}
-                    className={`flex items-center gap-2 mb-2 transition-all duration-500 ${animatedElements['pricing'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
-                    style={{ transitionDelay: `${i * 100 + 400}ms` }}
+          <div className=" py-12 px-6 md:px-16">
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Pricing Card */}
+              {[
+                {
+                  title: 'Basic',
+                  description: 'Perfect for getting started',
+                  price: '$0',
+                  features: [
+                    'Task reminders every 3-4 hours',
+                    'Unlimited task',
+                    '5 smart prioritizations/day',
+                  ],
+                },
+                {
+                  title: 'Professional',
+                  description: 'Power-up your productivity',
+                  price: '$5',
+                  features: [
+                    'Prioritize 50+ tasks with AI',
+                    'Customize your reminder times',
+                    'WhatsApp-based task management',
+                    'Weekly productivity report',
+                  ],
+                },
+                {
+                  title: 'Enterprise',
+                  description: 'Built for busy teams and power users',
+                  price: '$15',
+                  features: [
+                    'Unlimited AI prioritization & alerts',
+                    'Add tasks directly via WhatsApp',
+                    'Advanced productivity insights',
+                    'Prioritization by AI as per your requirements',
+                    'Advance reports about your productivity',
+                  ],
+                },
+              ].map((plan, index) => (
+                <div
+                  key={plan.title}
+                  className={`bg-gray-600 p-8 rounded-xl shadow-lg transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 ${animatedElements['pricing']
+                    ? 'opacity-100 translate-y-0'
+                    : 'opacity-0 translate-y-8'
+                    }`}
+                >
+                  <h3 className="text-2xl font-semibold text-white mb-2">
+                    {plan.title}
+                  </h3>
+                  <p className="text-gray-300 mb-4">{plan.description}</p>
+                  <div
+                    className={`flex items-center justify-center bg-indigo-500 text-white font-bold rounded-lg h-12 w-24 mb-4 text-lg transition-all duration-500 ${animatedElements['pricing'] ? 'scale-100' : 'scale-0'
+                      }`}
+                    style={{ transitionDelay: '300ms' }}
                   >
-                    <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 011-1h1V6a1 1 0 112 0v2h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V9H9a1 1 0 01-1-1z" />
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#!"
-                className={`block bg-indigo-600 text-white rounded-lg font-semibold text-center py-3 hover:bg-indigo-700 transition mt-6 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0 hover:scale-105' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: '700ms' }}
-              >
-                Get Started
-              </a>
-            </div>
-
-            <div
-              className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-700 hover:shadow-xl hover:-translate-y-2 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            >
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Professional</h3>
-              <p className="text-gray-600 mb-4">Power-up your productivity</p>
-              <div className={`flex items-center justify-center bg-indigo-600 text-white font-bold rounded-lg h-12 w-24 mb-4 transition-all duration-500 ${animatedElements['pricing'] ? 'scale-100' : 'scale-0'}`} style={{ transitionDelay: '300ms' }}>
-                $5
-              </div>
-              <p className="text-gray-600 mb-4">Per user / month</p>
-              <ul className="text-gray-600">
-                {['Prioritize 50+ tasks with AI', 'Customize your reminder times', ' WhatsApp-based task management', ' Weekly productivity report'].map((feature, i) => (
-                  <li
-                    key={feature}
-                    className={`flex items-center gap-2 mb-2 transition-all duration-500 ${animatedElements['pricing'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
-                    style={{ transitionDelay: `${i * 100 + 400}ms` }}
+                    {plan.price}
+                  </div>
+                  <p className="text-gray-400 mb-4">Per user / month</p>
+                  <ul className="text-gray-300">
+                    {plan.features.map((feature, i) => (
+                      <li
+                        key={feature}
+                        className={`flex items-center gap-2 mb-2 transition-all duration-500 ${animatedElements['pricing']
+                          ? 'opacity-100 translate-x-0'
+                          : 'opacity-0 -translate-x-4'
+                          }`}
+                        style={{ transitionDelay: `${i * 100 + 400}ms` }}
+                      >
+                        <svg
+                          className="h-5 w-5 text-green-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 011-1h1V6a1 1 0 112 0v2h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V9H9a1 1 0 01-1-1z"
+                          />
+                        </svg>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="#!"
+                    className={`block bg-indigo-500 text-white rounded-lg font-semibold text-center py-3 hover:bg-indigo-600 transition mt-6 ${animatedElements['pricing']
+                      ? 'opacity-100 translate-y-0 hover:scale-105'
+                      : 'opacity-0 translate-y-4'
+                      }`}
+                    style={{ transitionDelay: '700ms' }}
                   >
-                    <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 011-1h1V6a1 1 0 112 0v2h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V9H9a1 1 0 01-1-1z" />
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#!"
-                className={`block bg-indigo-600 text-white rounded-lg font-semibold text-center py-3 hover:bg-indigo-700 transition mt-6 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0 hover:scale-105' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: '700ms' }}
-              >
-                Get Started
-              </a>
-            </div>
-
-            <div
-              className={`bg-white p-8 rounded-xl shadow-lg transition-all duration-700 hover:shadow-xl hover:-translate-y-2 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-            >
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Enterprise</h3>
-              <p className="text-gray-600 mb-4">Built for busy teams and power users</p>
-              <div className={`flex items-center justify-center bg-indigo-600 text-white font-bold rounded-lg h-12 w-24 mb-4 transition-all duration-500 ${animatedElements['pricing'] ? 'scale-100' : 'scale-0'}`} style={{ transitionDelay: '300ms' }}>
-                $15
-              </div>
-              <p className="text-gray-600 mb-4">Per user / month</p>
-              <ul className="text-gray-600">
-                {[' Unlimited AI prioritization & alerts', 'Add tasks directly via WhatsApp', 'Advanced productivity insights', 'Prioritization by AI as per your requirements ', 'Advance reports about your productivity'].map((feature, i) => (
-                  <li
-                    key={feature}
-                    className={`flex items-center gap-2 mb-2 transition-all duration-500 ${animatedElements['pricing'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
-                    style={{ transitionDelay: `${i * 100 + 400}ms` }}
-                  >
-                    <svg className="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" clipRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9a1 1 0 011-1h1V6a1 1 0 112 0v2h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V9H9a1 1 0 01-1-1z" />
-                    </svg>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#!"
-                className={`block bg-indigo-600 text-white rounded-lg font-semibold text-center py-3 hover:bg-indigo-700 transition mt-6 ${animatedElements['pricing'] ? 'opacity-100 translate-y-0 hover:scale-105' : 'opacity-0 translate-y-4'}`}
-                style={{ transitionDelay: '700ms' }}
-              >
-                Get Started
-              </a>
+                    Get Started
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
+
         </div>
       </section>
 
@@ -478,7 +469,7 @@ const Home = () => {
           </svg>
         </button>
       )}
-      <Footer/>
+      <Footer />
     </div>
   );
 }
