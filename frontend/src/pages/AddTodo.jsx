@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import LoaderScreen from '../components/Loader';
-
+import { Link } from 'react-router-dom';
 const AddTodo = () => {
     const { state } = useLocation(); // Get todo from route
     const navigate = useNavigate();
@@ -110,6 +110,13 @@ const AddTodo = () => {
             <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} successMessage={successMsg} />
 
             <div className="w-full max-w-2xl bg-white/60 backdrop-blur-md shadow-xl rounded-2xl p-8 md:p-10 transition-all duration-300">
+                <Link
+                    to="/"
+                    className="inline-block bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-indigo-500 hover:text-white transition"
+                >
+                    Go Back
+                </Link>
+
                 <h1 className="text-3xl font-bold text-indigo-700 text-center mb-6">
                     {state?.todo ? "✏️ Edit Task" : "📝 Add New Task"}
                 </h1>

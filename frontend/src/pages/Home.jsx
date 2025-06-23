@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import Footer from '../components/Footer';
 const Home = () => {
   // States for controlling animations
   const [isVisible, setIsVisible] = useState(false);
@@ -477,6 +478,7 @@ const Home = () => {
           </svg>
         </button>
       )}
+      <Footer/>
     </div>
   );
 }

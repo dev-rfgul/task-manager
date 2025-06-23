@@ -7,7 +7,7 @@ import userModel from '../models/user.model.js'
 const router = express.Router();
 
 
-const RATE_LIMIT_MAX = 35; // example: max 5 AI calls per day
+const RATE_LIMIT_MAX = 50; // example: max 5 AI calls per day
 const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
 
 export const checkAndUpdateRateLimit = async (user) => {
@@ -25,7 +25,7 @@ export const checkAndUpdateRateLimit = async (user) => {
 
   if (timeSinceLastReset > RATE_LIMIT_WINDOW) {
     // Reset limit
-    user.rateLimit.count = 1;
+    user.rateLimit.count = 10;
     user.rateLimit.lastReset = now;
   } else {
     if (user.rateLimit.count >= RATE_LIMIT_MAX) {
@@ -53,16 +53,16 @@ router.post('/:id', async (req, res) => {
   const user = await userModel.findById(userID);
   if (!user) return res.status(404).json({ message: "User not found" });
   // ✅ Rate limiting check
-  const rateLimitStatus=await checkAndUpdateRateLimit(user);
+  const rateLimitStatus = await checkAndUpdateRateLimit(user);
 
   if (!rateLimitStatus.allowed) {
     const minutes = Math.ceil(rateLimitStatus.retryAfter / 60000);
     return res.status(429).json({
-      message: `Rate limit exceeded. Try again in ${minutes/60} hour(s).`,
+      message: `Rate limit exceeded. Try again in ${minutes / 60} hour(s).`,
     });
   }
   const tasks = await tasksforAIArrangement(userID); // fetch tasks from DB
-  console.log("tasks from ai suggestion",tasks)
+  console.log("tasks from ai suggestion", tasks)
   console.log(tasks)
 
   try {
@@ -109,7 +109,11 @@ router.post('/:id', async (req, res) => {
       parsedResult = result
     }
 
-    res.status(200).json({ message: parsedResult })
+    res.status(200).json({
+      message: parsedResult,
+      remainingTries: RATE_LIMIT_MAX - user.rateLimit.count
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

@@ -28,7 +28,7 @@ const Signup = () => {
 
     return (
         <>
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
+            <div className="bg-gray-900 min-h-screen flex items-center justify-center">
                 <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-8 w-full max-w-md">
                     <h2 className="text-3xl font-extrabold text-gray-800 dark:text-white text-center">
                         Sign Up

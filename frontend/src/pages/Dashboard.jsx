@@ -38,6 +38,7 @@ function Dashboard() {
         withCredentials: true
       });
       setTasks(response.data.tasks);
+      console.log(response.data)
       console.log('unsorted ', response.data.tasks)
       setTasks2(response.data.tasks)
       return response.data.tasks;
