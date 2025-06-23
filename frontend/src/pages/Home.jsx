@@ -141,10 +141,10 @@ const Home = () => {
             <p className={`mt-4 text-xl text-gray-600 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '100ms' }}>
               Task AI Studio learns your work style and sends <span className='font-bold'>smart reminders</span> on WhatsApp — so you <span className='font-bold'>never miss a deadline </span> again.</p>
             <div className={`mt-8 flex flex-col sm:flex-row gap-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ transitionDelay: '200ms' }}>
-              <Link to="/login" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium text-center hover:bg-indigo-700 transition hover:scale-105 transform">
+              <Link to="/signup" className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium text-center hover:bg-indigo-700 transition hover:scale-105 transform">
                 Try Task AI Free
               </Link>
-              <Link to="/login" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium text-center hover:border-gray-400 transition hover:scale-105 transform">
+              <Link to="/signup" className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium text-center hover:border-gray-400 transition hover:scale-105 transform">
                 use whatsapp bot instantly
               </Link>
 
@@ -267,9 +267,10 @@ const Home = () => {
                 <p className="text-sm text-gray-300 mb-4">
                   {step.desc}
                 </p>
-                <button className="mt-auto px-5 py-2.5 bg-white text-gray-900 font-medium rounded-lg border border-white hover:bg-gray-100 hover:border-gray-300 transition-all">
+
+                <Link to="/signup" className="mt-auto px-5 py-2.5 bg-white text-gray-900 font-medium rounded-lg border border-white hover:bg-gray-100 hover:border-gray-300 transition-all">
                   {step.btnText}
-                </button>
+                </Link>
               </div>
 
             ))}
