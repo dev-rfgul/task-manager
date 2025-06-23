@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Loader2 } from 'lucide-react'; // optional icon lib
 const AiSuggestion = () => {
     const user = JSON.parse(localStorage.getItem("user")) || null;
-    const userID = user?.user.id;
+    const userID = user.id;
 
     const [arrangedTask, setArrangedTask] = useState([]);
     const [triesLeft, setTriesLeft] = useState(null);

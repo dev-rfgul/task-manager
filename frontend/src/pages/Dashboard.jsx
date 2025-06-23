@@ -28,7 +28,7 @@ function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user")) || null;
 
   // console.log(user)
-  const userID = user?.user.id
+  const userID = user.id
   console.log("userid", userID)
 
   // get all the user tasks from the db
@@ -255,10 +255,10 @@ function Dashboard() {
               <div className="flex items-center gap-2">
                 {/* Hide Avatar on mobile */}
                 <div className="hidden sm:flex w-10 h-10 bg-indigo-600 rounded-full items-center justify-center text-white font-semibold shadow-md">
-                  {user.user.name[0]}
+                  {user.name[0]}
                 </div>
                 <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                  {user.user.name}
+                  {user.name}
                 </span>
               </div>
             </div>

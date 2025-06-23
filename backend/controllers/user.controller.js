@@ -5,12 +5,12 @@ import User from '../models/user.model.js';
 import mongoose from 'mongoose';
 export const registerUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, } = req.body;
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        console.log(name, email, password, role)
+        console.log(name, email, password)
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
@@ -22,12 +22,19 @@ export const registerUser = async (req, res) => {
             name,
             email,
             password: hashPassword,
-            role: role || "user", // Default to 'user' if not provided
+            role: "user", // Default to 'user' if not provided
         });
 
         await user.save();
 
-        res.status(200).json({ message: 'User registered successfully' });
+        res.status(200).json({
+            message: 'User registered successfully', user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error("Register error:", error);
         res.status(500).json({ message: "Server error", error: error.message });
@@ -136,7 +143,7 @@ export const getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.find().select('-password'); // Exclude password field
         res.status(200).json(users.length > 0 ? users.length : { message: "No users found" });
-        console.log("All users fetched successfully",users.length);
+        console.log("All users fetched successfully", users.length);
     }
     catch (error) {
         console.error("Get all users error:", error);

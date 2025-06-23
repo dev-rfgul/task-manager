@@ -16,16 +16,39 @@ const Signup = () => {
     console.log(import.meta.env.VITE_BACKEND_URL)
     const submit = (e) => {
         e.preventDefault();
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, { name, email, password },{withCredentials:true})
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, { name, email, password }, { withCredentials: true })
             .then(result => {
                 console.log('Response:', result.data); // Log response data
-                navigate('/login'); // Navigate after successful post request
+                console.log('Guest Signup Response:', result.data); // Log response data
+                const userData = result.data.user;
+                console.log(userData.user);
+                localStorage.setItem("user", JSON.stringify(userData))
+                console.log(userData)
+                // Navigate to the dashboard after guest signup
+                navigate('/dashboard');
+                window.location.reload(); // Reload the page to reflect the new user state
             })
             .catch(error => {
                 console.error('Error:', error); // Log error if there is one
             });
     }
 
+    const handleGuestSignup = () => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/guest`, {}, { withCredentials: true })
+            .then(result => {
+                console.log('Guest Signup Response:', result.data); // Log response data
+                const userData = result.data.newUser;
+                console.log(userData.user);
+                localStorage.setItem("user", JSON.stringify(userData))
+                console.log(userData)
+                // Navigate to the dashboard after guest signup
+                navigate('/dashboard');
+                window.location.reload(); // Reload the page to reflect the new user state
+            })
+            .catch(error => {
+                console.error('Guest Signup Error:', error); // Log error if there is one
+            });
+    };
     return (
         <>
             <div className="bg-gray-900 min-h-screen flex items-center justify-center">
@@ -36,7 +59,13 @@ const Signup = () => {
                     <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-2">
                         Create your account to get started. It’s free and easy!
                     </p>
-
+                    <button
+                        onClick={handleGuestSignup}
+                        type="submit"
+                        className="w-full mt-5 bg-blue-500 text-white py-3 px-4 rounded-lg shadow-lg hover:opacity-90 transition-opacity duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400 focus:ring-offset-2"
+                    >
+                        Continue without account
+                    </button>
                     <form onSubmit={submit} className="mt-8 space-y-6">
                         <div>
                             <label
@@ -109,6 +138,7 @@ const Signup = () => {
                         >
                             Create Account
                         </button>
+
                     </form>
 
                     <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">

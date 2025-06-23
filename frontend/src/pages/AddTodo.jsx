@@ -9,7 +9,7 @@ const AddTodo = () => {
     const navigate = useNavigate();
 
     const user = JSON.parse(localStorage.getItem("user")) || null;
-    const userID = user?.user.id;
+    const userID = user.id;
 
     const [status, setStatus] = useState("idle");
     const [errorMsg, setErrorMsg] = useState("");

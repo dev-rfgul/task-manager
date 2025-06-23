@@ -13,7 +13,9 @@ const App = () => {
 
   const user = JSON.parse(localStorage.getItem("user")) || null;
   // Ensure user is valid before accessing role
-  const role = user?.user?.role || null;
+  console.log(user)
+  const role = user?.role || null;
+  console.log(role)
   const isUserLoggedIn = !!user && !!role;
   // alert(isUserLoggedIn)
   console.log(isUserLoggedIn)
