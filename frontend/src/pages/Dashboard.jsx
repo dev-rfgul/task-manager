@@ -231,7 +231,7 @@ function Dashboard() {
                 </svg>
               </div>
               <h1 className="text-2xl font-bold text-gray-800">
-                TaskSync<span className="text-indigo-600">AI</span>
+                Task AI <span className="text-indigo-600">Studio</span>
               </h1>
             </div>
 
