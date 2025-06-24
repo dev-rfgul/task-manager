@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import AddTodo from './pages/AddTodo';
 import Summary from './pages/Summary';
 import AdminPanel from './pages/AdminPanel';
+import Profile from './pages/Profile';
 
 
 const App = () => {
@@ -24,14 +25,22 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
-        {role === "admin" && (
-          <AdminPanel />
-        )}
         <Routes>
+          {/* Role-based Routes */}
+          {role === "admin" && (
+            <Route path="/admin" element={<AdminPanel />} />
+          )}
+          {(role === "user" || role === "guest") && (
+            <Route path="/profile" element={<Profile />} />
+          )}
+
+          {/* Public Routes */}
           <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
-          <Route path='/add-todo' element={<AddTodo />} />
-          <Route path='/summary' element={<Summary />} />
+          <Route path="/add-todo" element={<AddTodo />} />
+          <Route path="/summary" element={<Summary />} />
+
+          {/* Redirects and Auth Routes */}
           <Route
             path="/"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Home />}

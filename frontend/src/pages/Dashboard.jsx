@@ -5,6 +5,7 @@ import axios from 'axios';
 import LoaderScreen from '../components/Loader';
 import { Link, useNavigate } from 'react-router-dom';
 import AiSuggestion from '../components/AiSuggestion';
+import Navbar from '../components/Navbar';
 
 function Dashboard() {
 
@@ -65,14 +66,7 @@ function Dashboard() {
   }, [userID]);
 
 
-  const sendWhatsappMsg = async () => {
-    alert("Do not change this message, it is used to link your WhatsApp with the app . By clicking Ok you agree to our terms and conditions.");
-    const message = `secret code: ${userID}`;
-    window.open(
-      `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
-      "_blank"
-    );
-  }
+ 
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
@@ -99,7 +93,11 @@ function Dashboard() {
   const deleteTask = async (taskID) => {
     setStatus("loading")
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/task/deleteTask/${taskID}`)
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/task/deleteTask/${taskID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       console.log(response.data)
       setStatus("success")
       setSuccessMsg(response.data.message)
@@ -235,49 +233,7 @@ function Dashboard() {
       <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} />
       <div className="container mx-auto px-4 py-6">
         {/* Header Section - Improved responsiveness */}
-        <header className="mb-8 px-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            {/* Logo Section */}
-            <div className="flex items-center gap-2">
-              <div className="bg-indigo-600 text-white p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <h1 className="text-2xl font-bold text-gray-800">
-                Task AI <span className="text-indigo-600">Studio</span>
-              </h1>
-            </div>
-
-            {/* Right Section */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-              {/* WhatsApp Button */}
-              <button
-
-                onClick={() => {
-                  sendWhatsappMsg()
-                }}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-900 text-white text-sm rounded-lg transition"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 32 32">
-                  <path d="M16 0C7.164 0 0 6.99 0 15.615c0 2.757.763 5.34 2.073 7.591L0 32l8.005-2.094A15.964 15.964 0 0016 31.23c8.836 0 16-6.99 16-15.615C32 6.99 24.836 0 16 0zm0 28.615c-2.545 0-4.946-.688-7.01-1.896l-.502-.296-4.755 1.244 1.266-4.63-.327-.475a12.892 12.892 0 01-2.045-7.047c0-7.13 5.943-12.93 13.333-12.93S29.333 8.486 29.333 15.615 23.39 28.615 16 28.615z" />
-                </svg>
-                Get Alert on WhatsApp
-              </button>
-
-              {/* User Info */}
-              <div className="flex items-center gap-2">
-                {/* Hide Avatar on mobile */}
-                <div className="hidden sm:flex w-10 h-10 bg-indigo-600 rounded-full items-center justify-center text-white font-semibold shadow-md">
-                  {user.name[0]}
-                </div>
-                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                  {user.name}
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Navbar user={user} />
 
 
 
@@ -395,6 +351,7 @@ function Dashboard() {
                                 className="p-1 hover:text-blue-600 rounded-full hover:bg-blue-50"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </button>
