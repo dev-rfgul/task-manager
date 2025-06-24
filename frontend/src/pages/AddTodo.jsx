@@ -53,6 +53,8 @@ const AddTodo = () => {
         return localISOTime;
     };
 
+    const token = localStorage.getItem("token");
+    console.log(token);
     const handleSubmit = async (e) => {
         setStatus("loading");
         e.preventDefault();
@@ -69,7 +71,13 @@ const AddTodo = () => {
                 const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/task/updateTask`, {
                     taskID: state.todo._id,
                     updatedTask: newTask,
-                });
+                },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
 
                 if (response.status === 200) {
                     setSuccessMsg("Task updated successfully");
@@ -78,10 +86,19 @@ const AddTodo = () => {
                 }
             } else {
                 // ADD new task
-                const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/addTask`, {
-                    userID,
-                    newTask
-                });
+                const response = await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/task/addTask`,
+                    {
+                        userID,
+                        newTask
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
 
                 if (response.status === 200) {
                     setStatus("success");

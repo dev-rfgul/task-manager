@@ -31,12 +31,21 @@ function Dashboard() {
   const userID = user.id
   console.log("userid", userID)
 
+  const token = localStorage.getItem("token");
+  console.log("token", token)
   // get all the user tasks from the db
   const getAllUserTasks = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`, {
-        withCredentials: true
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/task/getAllTasks/${userID}`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       setTasks(response.data.tasks);
       console.log(response.data)
       console.log('unsorted ', response.data.tasks)
@@ -113,7 +122,12 @@ function Dashboard() {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/task/updateTaskStatus`, {
         taskID,
         completionStatus
-      })
+      },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
       if (!response) {
         setStatus("error")
         setErrorMsg(response.data.message)

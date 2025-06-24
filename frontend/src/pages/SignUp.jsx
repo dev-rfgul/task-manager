@@ -20,9 +20,10 @@ const Signup = () => {
             .then(result => {
                 console.log('Response:', result.data); // Log response data
                 console.log('Guest Signup Response:', result.data); // Log response data
-                const userData = result.data.user;
-                console.log(userData.user);
-                localStorage.setItem("user", JSON.stringify(userData))
+                const userData = result.data;
+                console.log(userData);
+                localStorage.setItem("user", JSON.stringify(userData.user))
+                localStorage.setItem("token", JSON.stringify(userData.token))
                 console.log(userData)
                 // Navigate to the dashboard after guest signup
                 navigate('/dashboard');
@@ -37,9 +38,10 @@ const Signup = () => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/guest`, {}, { withCredentials: true })
             .then(result => {
                 console.log('Guest Signup Response:', result.data); // Log response data
-                const userData = result.data.user;
+                const userData = result.data;
                 console.log(userData.user);
-                localStorage.setItem("user", JSON.stringify(userData))
+                localStorage.setItem("user", JSON.stringify(userData.user))
+                localStorage.setItem("token", JSON.stringify(userData.token))
                 console.log(userData)
                 // Navigate to the dashboard after guest signup
                 navigate('/dashboard');

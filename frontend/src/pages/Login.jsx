@@ -21,13 +21,16 @@ const Login = () => {
                 const userData = result.data.user;
                 console.log(userData.user);
                 localStorage.setItem("user", JSON.stringify(userData))
+                localStorage.setItem("token", result.data.token);
                 console.log(userData)
                 // Check the email to determine the redirection path
                 if (userData.role === "admin") {
-                    navigate('/admin', { state: { user: userData } }); // Redirect to admin page
+                    navigate('/admin'); // Redirect to admin page
+                    window.location.reload();
                 } else {
                     window.location.reload();
-                    navigate('/dashboard', { state: { user: userData } });
+                    navigate('/dashboard');
+                    window.location.reload(); // Reload the page to ensure the user state is updated
                     // Redirect to user page
                 }
             })

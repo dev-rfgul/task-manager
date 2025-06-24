@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import UserModel from '../models/user.model.js';
 import User from '../models/user.model.js';
-import mongoose from 'mongoose';
+
 export const registerUser = async (req, res) => {
     try {
         const { name, email, password, } = req.body;
@@ -27,13 +27,19 @@ export const registerUser = async (req, res) => {
 
         await user.save();
 
+        const token = jwt.sign(
+            { id: user._id, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '90d' }
+        );
         res.status(200).json({
             message: 'User registered successfully', user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role
-            }
+            },
+            token
         });
     } catch (error) {
         console.error("Register error:", error);
@@ -63,14 +69,14 @@ export const loginUser = async (req, res) => {
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '30d' }
+            { expiresIn: '90d' }
         );
 
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            maxAge: 90 * 24 * 60 * 60 * 1000, // 30 days
         });
         res.status(200).json({
             message: 'Login successful',
@@ -88,19 +94,6 @@ export const loginUser = async (req, res) => {
     }
 };
 
-export const logoutUser = async (req, res) => {
-    try {
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-        });
-
-        res.status(200).json({ message: "User logged out successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
 
 export const createGuestUser = async (req, res) => {
     try {
@@ -128,6 +121,10 @@ export const createGuestUser = async (req, res) => {
 
         await user.save();
 
+        const token = jwt.sign(
+            { id: user._id, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+        );
         res.status(201).json({
             message: "Guest user created successfully",
             user: {
@@ -136,6 +133,7 @@ export const createGuestUser = async (req, res) => {
                 email: user.email,
                 role: user.role
             },
+            token
         });
 
     } catch (error) {

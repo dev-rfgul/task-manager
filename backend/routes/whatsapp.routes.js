@@ -1,3 +1,5 @@
+// it is used to define the routes for sending WhatsApp reminders dont delete this
+
 // /backend/server.js
 import express from 'express';
 import bodyParser from 'body-parser';

@@ -1,3 +1,8 @@
+// this is the file responsible for sending task reminders to users via WhatsApp
+// It fetches the tasks due for the current day and sends a reminder message to the user
+// using the WhatsApp client.
+
+
 // /backend/controllers/taskReminderController.js
 import User from '../models/user.model.js'; // Import the User model
 import Task from '../models/task.model.js'; // Import the Task model

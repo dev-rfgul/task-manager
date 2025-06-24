@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import axios from 'axios';
 import { Users, UserCheck, UserX, Activity, TrendingUp, Calendar, Phone, Mail, Crown, Shield } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -8,21 +9,27 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // const token = localStorage.getItem('token');
+    // console.log('Token:', token);
     const getDashboardData = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/dashboard`, {
-                credentials: 'include'
+            const token = localStorage.getItem('token'); // Get token from localStorage
+
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/dashboard`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to fetch dashboard data');
-            }
-            const data = await response.json();
-            return data;
+
+            // Axios automatically parses JSON response
+            return response.data;
+
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
             throw err;
         }
     };
+
 
     useEffect(() => {
         const fetchData = async () => {
