@@ -118,7 +118,7 @@ export const createGuestUser = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(guestPassword, 10);
 
-        const newUser = new User({
+        const user = new User({
             name: guestName,
             email: guestEmail,
             password: hashedPassword,
@@ -126,11 +126,16 @@ export const createGuestUser = async (req, res) => {
             role: 'guest'
         });
 
-        await newUser.save();
+        await user.save();
 
         res.status(201).json({
             message: "Guest user created successfully",
-            newUser
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            },
         });
 
     } catch (error) {

@@ -37,7 +37,7 @@ const Signup = () => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/guest`, {}, { withCredentials: true })
             .then(result => {
                 console.log('Guest Signup Response:', result.data); // Log response data
-                const userData = result.data.newUser;
+                const userData = result.data.user;
                 console.log(userData.user);
                 localStorage.setItem("user", JSON.stringify(userData))
                 console.log(userData)

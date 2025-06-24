@@ -413,7 +413,8 @@ client.on('ready', async () => {
   }
 
   // Run reminders every hour with randomized sending
-  cron.schedule('0 */3 * * *', async () => {
+  // '*/10 * * * * *' for every 10 seconds
+  cron.schedule('*/10 * * * *', async () => {
     console.log('⏰ Running scheduled task...');
 
     try {
@@ -982,6 +983,8 @@ client.on('message', async (message) => {
       );
     } else if (contentLower === 'confirm') {
       removeWhatsappSubscriber(number);
+      registeredUsers.delete(number);
+      console.log(`🔌 User ${number} logged out successfully`);
       await sendMessageWithDelay(message.from,
         `👋 *Successfully Logged Out*\n\nThank you for using TaskAI Studio!\n\n*To reconnect anytime:*\nsecret code: your-24-digit-code\n\n*Stay productive!* 🎯\nwww.taskai.studio`
       );

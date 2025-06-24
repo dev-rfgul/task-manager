@@ -20,7 +20,8 @@ export const getTodaysTasks = async (whatsappNumber) => {
     try {
         const tasks = await getUserTasks(user._id);
         if (!tasks || tasks.length === 0) {
-            return { message: "Can't find tasks for this user" };
+            return { message: "Can't find tasks for this user", todaysTasks: [] };
+
         }
 
         const today = new Date();
@@ -157,7 +158,7 @@ export const productivityReport = async (whatsappNumber) => {
 
         const completedTasks = tasks.filter(task => task.completionStatus === 'Completed');
         const pendingTasks = tasks.filter(task => task.completionStatus === 'Pending');
-        const overDueTasks = tasks.filter(task =>  task.completionStatus === 'Overdue' );
+        const overDueTasks = tasks.filter(task => task.completionStatus === 'Overdue');
 
         const report = {
             totalTasks: tasks.length,
