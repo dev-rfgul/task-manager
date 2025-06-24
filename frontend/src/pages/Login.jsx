@@ -52,7 +52,7 @@ const Login = () => {
                     <div>
                         <label
                             htmlFor="email"
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            className="block text-sm font-medium text-white"
                         >
                             Email
                         </label>
@@ -61,7 +61,7 @@ const Login = () => {
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-white bg-gray-800 placeholder-gray-400"
                             placeholder="Enter your email"
                         />
                     </div>
@@ -69,7 +69,7 @@ const Login = () => {
                     <div>
                         <label
                             htmlFor="password"
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            className="block text-sm font-medium text-white"
                         >
                             Password
                         </label>
@@ -78,10 +78,11 @@ const Login = () => {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                            className="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-white bg-gray-800 placeholder-gray-400"
                             placeholder="Enter your password"
                         />
                     </div>
+
 
                     <button
                         type="submit"

@@ -143,7 +143,7 @@ export const createGuestUser = async (req, res) => {
         res.status(500).json({ message: "Server error during guest signup" });
     }
 };
-
+//to couunt the number of users
 export const getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.find().select('-password'); // Exclude password field

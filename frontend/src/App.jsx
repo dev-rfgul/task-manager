@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Home from './pages/Home';
 import AddTodo from './pages/AddTodo';
 import Summary from './pages/Summary';
+import AdminPanel from './pages/AdminPanel';
 
 
 const App = () => {
@@ -23,6 +24,9 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
+        {role === "admin" && (
+          <AdminPanel />
+        )}
         <Routes>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
@@ -31,7 +35,7 @@ const App = () => {
           <Route
             path="/"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Home />}
-          />  
+          />
           <Route
             path="/login"
             element={isUserLoggedIn ? <Navigate to="/dashboard" /> : <Login />}

@@ -10,6 +10,7 @@ import userRoutes from './routes/user.routes.js';
 import taskRoutes from './routes/task.routes.js';
 import aiSuggestions from './routes/aiSuggestions.routes.js'
 import whatsapp from './routes/whatsapp.routes.js'
+import adminRoutes from './routes/admin.routes.js';
 
 
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/user', userRoutes);
 app.use('/task', taskRoutes)
 app.use('/aiSuggestion', aiSuggestions)
 app.use('/whatsapp', whatsapp)
+app.use('/admin',adminRoutes)
 
 
 const PORT = process.env.PORT || 5000;

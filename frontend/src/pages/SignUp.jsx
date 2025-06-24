@@ -82,18 +82,17 @@ const Signup = () => {
                                 onChange={(e) => setName(e.target.value)}
                             />
                         </div>
-
                         <div>
                             <label
                                 htmlFor="email"
-                                className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
+                                className="block text-white text-sm font-medium mb-1"
                             >
                                 Email Address
                             </label>
                             <input
                                 type="email"
                                 id="email"
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                 placeholder="Enter your email"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
@@ -102,19 +101,20 @@ const Signup = () => {
                         <div>
                             <label
                                 htmlFor="password"
-                                className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-1"
+                                className="block text-white text-sm font-medium mb-1"
                             >
                                 Password
                             </label>
                             <input
                                 type="password"
                                 id="password"
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
                                 placeholder="Enter your password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 autoComplete="new-password"
                             />
                         </div>
+
 
                         <div>
                             <label
