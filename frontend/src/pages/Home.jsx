@@ -52,8 +52,8 @@ const Home = () => {
               <path d="M9 14L11 16L15 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span className={`ml-2 text-2xl font-bold text-indigo-600 transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}><h1 className="text-2xl font-bold text-gray-800">
-                Task AI <span className="text-indigo-600">Studio</span>
-              </h1></span>
+              Task AI <span className="text-indigo-600">Studio</span>
+            </h1></span>
           </div>
 
           {/* Desktop Nav */}
@@ -185,8 +185,17 @@ const Home = () => {
           </div>
           <div className={`md:w-1/2 mt-12 md:mt-0 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}`} style={{ transitionDelay: '400ms' }}>
             <div className="relative">
-              <div className={`absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg transform rotate-3 scale-105 opacity-10 transition-all duration-1000 ${isVisible ? 'animate-pulse' : ''}`}></div>
-              <img src="https://images.unsplash.com/photo-1586282023692-6bfbd629e85d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Task AI Studio AI Dashboard" className="rounded-lg shadow-2xl relative z-10 transition-transform hover:scale-102 transform" />
+              <div className={`absolute inset-0  rounded-lg transform rotate-3 scale-105 opacity-10 transition-all duration-1000 ${isVisible ? 'animate-pulse' : ''}`}></div>
+              {/* Video element instead of image */}
+              <video
+                src="/banner-video.mp4"
+                alt="Task AI Studio AI Dashboard"
+                className="rounded-lg shadow-2xl relative z-10 transition-transform hover:scale-102 transform"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
             </div>
           </div>
         </div>
@@ -385,7 +394,7 @@ const Home = () => {
                     'WhatsApp-based task management',
                     'Weekly productivity report',
                   ],
-                  paymentLink:'https://buy.stripe.com/7sY9AVeAa56G8dt14f3F600'
+                  paymentLink: 'https://buy.stripe.com/7sY9AVeAa56G8dt14f3F600'
                 },
                 {
                   title: 'Enterprise',

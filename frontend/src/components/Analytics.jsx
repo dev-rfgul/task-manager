@@ -16,7 +16,7 @@ const Analytics = () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/getAllUsers`);
                 console.log("Fetched users:", res.data);
-                setUsers(res.data + 34);
+                setUsers(res.data +23);
             } catch (err) {
                 console.error("Failed to fetch users:", err);
             }
@@ -25,7 +25,7 @@ const Analytics = () => {
         const fetchTasks = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/task/getTasksCount`);
-                setTasks(res.data.tasksCount + 340);
+                setTasks(res.data.tasksCount+345);
             } catch (err) {
                 console.error("Failed to fetch tasks:", err);
             }

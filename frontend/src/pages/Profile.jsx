@@ -329,15 +329,15 @@ const ProfileDashboard = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="text-center">
                             <p className="text-2xl font-bold text-indigo-600">{totalEstimatedTime}</p>
-                            <p className="text-sm text-gray-600">Total Estimated Hours</p>
+                            <p className="text-sm text-gray-600">Total Estimated Mins</p>
                         </div>
                         <div className="text-center">
                             <p className="text-2xl font-bold text-green-600">{completedTime}</p>
-                            <p className="text-sm text-gray-600">Completed Hours</p>
+                            <p className="text-sm text-gray-600">Completed Mins</p>
                         </div>
                         <div className="text-center">
                             <p className="text-2xl font-bold text-yellow-600">{totalEstimatedTime - completedTime}</p>
-                            <p className="text-sm text-gray-600">Remaining Hours</p>
+                            <p className="text-sm text-gray-600">Remaining Mins</p>
                         </div>
                     </div>
                     <div className="mt-4">
