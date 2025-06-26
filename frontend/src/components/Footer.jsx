@@ -19,7 +19,8 @@ const Footer = () => {
                     <div className="flex space-x-4 mt-4">
                         {/* Custom TikTok Icon */}
                         <a
-                            href="https://www.tiktok.com"
+                            href="https://www.tiktok.com/@taskai.studio"
+
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-400 hover:text-white"
@@ -32,7 +33,7 @@ const Footer = () => {
                             </svg>
                         </a>
                         <a
-                            href="https://twitter.com"
+                            href="https://x.com/taskaistudio"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-400 hover:text-white"
@@ -40,7 +41,7 @@ const Footer = () => {
                             <Twitter size={20} />
                         </a>
                         <a
-                            href="https://linkedin.com"
+                            href="https://www.linkedin.com/company/task-ai-studio/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-400 hover:text-white"
@@ -48,7 +49,7 @@ const Footer = () => {
                             <Linkedin size={20} />
                         </a>
                         <a
-                            href="https://instagram.com"
+                            href="https://www.instagram.com/taskaistudio/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-gray-400 hover:text-white"
@@ -64,7 +65,7 @@ const Footer = () => {
                         <li><a href="#" className="hover:text-white">Features</a></li>
                         <li><a href="#" className="hover:text-white">How it Works</a></li>
                         <li><a href="#" className="hover:text-white">Pricing</a></li>
-                        <li><a href="#" className="hover:text-white">Sign In</a></li>
+                        <li><a href="/login" className="hover:text-white">Sign In</a></li>
                         <li><a href="#" className="hover:text-white">Get Started</a></li>
                     </ul>
                 </div>
