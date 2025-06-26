@@ -37,9 +37,12 @@ const userSchema = mongoose.Schema({
             ref: 'Task',
         }
     ],
+    //rate limiting for ai requests
     rateLimit: {
         count: { type: Number, default: 0 },
-        lastReset: { type: Date, default: Date.now },
+        lastReset: { type: String, default: () => new Date().toISOString().slice(0, 10) },
+        maxPerDay: { type: Number, default: 10 },
+        totalRequests: { type: Number, default: 0 },
     },
     whatsappNumber: {
         type: String,

@@ -54,6 +54,7 @@ const AddTodo = () => {
     };
 
     const token = localStorage.getItem("token");
+    // token.split()
     console.log(token);
     const handleSubmit = async (e) => {
         setStatus("loading");

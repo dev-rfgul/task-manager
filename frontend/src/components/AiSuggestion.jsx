@@ -27,16 +27,13 @@ const AiSuggestion = () => {
 
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/aiSuggestion/${userID}`);
-            console.log("AI Suggestion Response:", response.data);
+            console.log("AI Suggestion Response:", JSON.stringify(response.data, null, 2));
 
             const { message, remainingTries } = response.data;
-            const data = message.candidates[0].content.parts[0].text;
-            const cleanedData = data.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-            const jsonData = JSON.parse(cleanedData);
 
-            localStorage.setItem('arrangedByAi', JSON.stringify(jsonData));
-            setArrangedTask(jsonData);
-            // setRemainingTries(response.data.remainingTries); // ✅ from backend
+            // Save and update UI
+            localStorage.setItem('arrangedByAi', JSON.stringify(message));
+            setArrangedTask(message);
             setTriesLeft(remainingTries);
 
             setStatus("success");
@@ -48,7 +45,7 @@ const AiSuggestion = () => {
 
             if (error.response?.status === 429) {
                 const tries = error.response?.data?.remainingTries ?? 0;
-                setRemainingTries(tries); // ✅ update state
+                setRemainingTries(tries);
                 setErrorMsg("❌ You’ve utilized all your credits. Please try again after 24 hours.");
             } else {
                 setErrorMsg("❌ Failed to fetch AI suggestions. Please try again.");
@@ -60,6 +57,7 @@ const AiSuggestion = () => {
             setStatus("idle");
         }
     };
+
 
     return (
         <div className="w-full">

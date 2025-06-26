@@ -9,7 +9,9 @@ export const authenticate = (req, res, next) => {
     return res.status(401).json({ message: 'Unauthorized: No token provided' });
   }
 
-  const token = authHeader.split(' ')[1];
+  const rawToken = authHeader.split(' ')[1];
+  const token = rawToken.replace(/^"|"$/g, ''); // remove surrounding quotes
+  console.log("🧪 Extracted Token:", token);
   console.log("🧪 Extracted Token:", token);
 
   try {

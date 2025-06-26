@@ -1,124 +1,135 @@
-import express from 'express'
-import { generateContent } from "../controllers/aiResponse.controller.js";
-import { getUserTasks, tasksforAIArrangement } from '../controllers/task.controller.js';
-import userModel from '../models/user.model.js'
 
+import express from 'express';
+import { generateContent } from "../controllers/aiResponse.controller.js";
+import { tasksforAIArrangement } from '../controllers/task.controller.js';
+import userModel from '../models/user.model.js';
 
 const router = express.Router();
 
-
-const RATE_LIMIT_MAX = 10; // example: max 5 AI calls per day
-const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+const RATE_LIMIT_WINDOW = 24 * 60 * 60 * 1000; // 24 hours for real use
+const DEFAULT_RATE_LIMIT = 11; // fallback if user has no maxPerDay
 
 export const checkAndUpdateRateLimit = async (user) => {
   const now = new Date();
 
+  // Set default rateLimit object if not present
   if (!user.rateLimit) {
     user.rateLimit = {
       count: 0,
       lastReset: now,
+      totalRequests: 0,
     };
   }
 
-  // Check if the reset window has passed
-  const timeSinceLastReset = now - new Date(user.rateLimit.lastReset);
+  const { lastReset, count } = user.rateLimit;
+  const timeSinceLastReset = now - new Date(lastReset);
 
+  // Reset if window has passed
   if (timeSinceLastReset > RATE_LIMIT_WINDOW) {
-    // Reset limit
-    user.rateLimit.count = 10;
+    user.rateLimit.count = 0;
     user.rateLimit.lastReset = now;
-  } else {
-    if (user.rateLimit.count >= RATE_LIMIT_MAX) {
-      // ❌ Return status instead of throwing
-      return { allowed: false, retryAfter: RATE_LIMIT_WINDOW - timeSinceLastReset };
-    }
-
-    // ✅ Still under limit, increment count
-    user.rateLimit.count += 1;
   }
+console.log("Rate limit check:", user.rateLimit.maxPerDay)
+  // Get max limit from user model or fallback to default
+  const MAX_CALLS = user.maxPerDay ?? DEFAULT_RATE_LIMIT;
+
+  if (user.rateLimit.count >= MAX_CALLS) {
+    const retryAfter = RATE_LIMIT_WINDOW - timeSinceLastReset;
+    return {
+      allowed: false,
+      retryAfter,
+    };
+  }
+
+  // Update usage count and save
+  user.rateLimit.count += 1;
+  user.rateLimit.totalRequests = (user.rateLimit.totalRequests || 0) + 1;
 
   await user.save();
 
-  return { allowed: true };
+  return {
+    allowed: true,
+    remaining: MAX_CALLS - user.rateLimit.count,
+  };
 };
-
-
-
-
-
 
 router.post('/:id', async (req, res) => {
   const userID = req.params.id;
 
   const user = await userModel.findById(userID);
   if (!user) return res.status(404).json({ message: "User not found" });
-  // ✅ Rate limiting check
-  const rateLimitStatus = await checkAndUpdateRateLimit(user);
 
+  const rateLimitStatus = await checkAndUpdateRateLimit(user);
   if (!rateLimitStatus.allowed) {
     const minutes = Math.ceil(rateLimitStatus.retryAfter / 60000);
     return res.status(429).json({
-      message: `Rate limit exceeded. Try again in ${minutes / 60} hour(s).`,
+      message: `Rate limit exceeded. Try again in ${minutes} minute(s).`,
+      remainingTries: 0,
     });
   }
-  const tasks = await tasksforAIArrangement(userID); // fetch tasks from DB
-  console.log("tasks from ai suggestion", tasks)
-  console.log(tasks)
+
+  const tasks = await tasksforAIArrangement(userID);
 
   try {
-    const result = await generateContent(`
-            You are a helpful assistant. I will give you a list of tasks.
-            Emotional Impact: Prioritize tasks that involve loved ones or critical situations.
+    const prompt = `
+      You are a helpful assistant. I will give you a list of tasks.
 
-            Urgency & Importance: Handle time-sensitive tasks first (e.g., deadlines, the task whose deadline is near is to be completed first).
+      Emotional Impact: Prioritize tasks that involve loved ones or critical situations.
+      Urgency & Importance: Handle time-sensitive tasks first.
+      Time Efficiency: Prioritize quick tasks with a big impact.
+      Long-Term Impact: Consider tasks important for the future.
+      Duration & Energy: Factor in task duration and energy.
 
-            Time Efficiency: Give priority to quick tasks that have a significant impact.
+      Arrange tasks in a human-like way, balancing emotional context, urgency, and impact.
+      Keep deadlines in mind.
 
-            Long-Term Impact: Consider tasks that may not be urgent but are crucial for the future.
+      Your response **must** be a JSON array of objects like:
+      [
+        {
+          "title": "task title",
+          "reason": "1-line reason"
+        },
+        ...
+      ]
 
-            Duration & Energy: Factor in how long tasks take and manage them accordingly.
+      Do NOT add explanation, intro, outro, or markdown formatting.
 
-            Arrange tasks in a human-like way, balancing emotional context, urgency, and impact.
+      Here are the tasks: ${JSON.stringify(tasks)}
+    `;
 
-            as well as keep in mind the deadline of the task.
-           
+    const rawResponse = await generateContent(prompt);
+    // console.log("AI Response:", rawResponse);
+    // Try extracting valid JSON
+    let text;
+    if (rawResponse?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      text = rawResponse.candidates[0].content.parts[0].text;
+      console.log("Extracted text from AI response:", text);
+    } else if (typeof rawResponse === 'string') {
+      text = rawResponse;
+    } else {
+      throw new Error("Invalid response from AI");
+    }
 
-            Your response **must** be a JSON array of objects in the following format:
-            [
-              {
-                "title": "task title here",
-                "reason": "short 1-line reason why you have kept this at this position",
-              },
-              ...
-            ]
+    const cleaned = text.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    let parsedResult;
 
-            Do NOT add any explanation, intro, outro, or markdown formatting.
-            Here are the tasks: ${JSON.stringify(tasks)}
-        `)
-
-    // Log the response
-    console.log(result)
-
-
-    // Parse if it's a stringified JSON response (sometimes needed)
-    let parsedResult
     try {
-      parsedResult = JSON.parse(result)
+      parsedResult = JSON.parse(cleaned);
     } catch (err) {
-      // fallback, just return raw result if it's not parseable
-      parsedResult = result
+      console.warn("⚠️ JSON parsing failed, returning raw text");
+      parsedResult = text;
     }
 
     res.status(200).json({
       message: parsedResult,
-      remainingTries: RATE_LIMIT_MAX - user.rateLimit.count
+      remainingTries: (user.rateLimit.maxPerDay ) - user.rateLimit.count,
     });
 
+
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error("❌ AI generation failed:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
-})
-
-
+});
 
 export default router;
