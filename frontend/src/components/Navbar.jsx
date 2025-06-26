@@ -22,7 +22,7 @@ function Header({ user }) {
         alert("Do not change this message, it is used to link your WhatsApp with the app . By clicking Ok you agree to our terms and conditions.");
         const message = `secret code: ${user.id}`;
         window.open(
-            `https://wa.me/923329296026?text=${encodeURIComponent(message)}`,
+            `https://wa.me/905489274659?text=${encodeURIComponent(message)}`,
             "_blank"
         );
     }
