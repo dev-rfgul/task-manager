@@ -6,6 +6,7 @@ import LoaderScreen from '../components/Loader';
 import { Link, useNavigate } from 'react-router-dom';
 import AiSuggestion from '../components/AiSuggestion';
 import Navbar from '../components/Navbar';
+import WebsiteTour from '../components/WebsiteTour';
 
 function Dashboard() {
 
@@ -66,7 +67,7 @@ function Dashboard() {
   }, [userID]);
 
 
- 
+
   const sortTasksByDueDate = () => {
     console.log('entered the sorting func');
     if (!tasks2 || tasks2.length === 0) return; // Guard clause
@@ -231,13 +232,10 @@ function Dashboard() {
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen relative ">
       <LoaderScreen status={status} errorMessage={errorMsg} onClose={handleClose} />
+      <WebsiteTour />
       <div className="container mx-auto px-4 py-6">
         {/* Header Section - Improved responsiveness */}
         <Navbar user={user} />
-
-
-
-
 
         {/* Main Content - Improved responsive layout */}
         <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -247,6 +245,7 @@ function Dashboard() {
             <h2 className="text-lg font-semibold mb-3 text-gray-800">AI Suggestions</h2>
             <AiSuggestion />
           </div>
+          
           <div className="lg:col-span-3">
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -255,6 +254,7 @@ function Dashboard() {
 
                 </div>
                 <div className="flex gap-1">
+                  
                   <Link to='/add-todo'>
                     <button className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm font-medium shadow-sm hover:bg-indigo-700 transition-colors">
                       <span className="flex items-center gap-1">
@@ -402,6 +402,8 @@ function Dashboard() {
 
 
         </main>
+
+        
       </div>
     </div>
   );
